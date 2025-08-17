@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
 
 export default function Page() {
   return (
@@ -13,13 +14,16 @@ export default function Page() {
   [clip-path:circle(50%_at_50%_100%)]"
       ></div>
 
-      <div className="w-full h-full flex items-center justify-center z-30">
+      <div className="w-full h-full flex items-center justify-center z-30 shadow-2xl">
         <div className="md:w-1/2 hidden md:block h-full bg-[url('/pexels-emrecan-2079684.jpg')] bg-no-repeat bg-center bg-cover"></div>
         <div className="bg-white w-full md:w-1/2  h-full flex flex-col">
-          <div className="w-full flex items-center justify-end p-5">
-            <Button className="bg-black text-white cursor-pointer rounded-none px-10">
+          <div className="w-full flex items-center justify-end p-3">
+            <Link
+              href="/Register"
+              className="bg-black py-1  md:py-2 text-white cursor-pointer rounded-none px-10"
+            >
               Login
-            </Button>
+            </Link>
           </div>
           <div className="flex-1 flex flex-col items-center justify-center px-10">
             <div className="w-full flex flex-col items-center gap-1.5 text-center">
