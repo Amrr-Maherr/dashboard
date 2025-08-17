@@ -6,12 +6,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 export default function Page() {
   return (
-    <section className="flex items-center relative justify-center bg-[#ECEEDF] h-screen py-[151px] px-[298px] overflow-hidden">
-      <div className="absolute inset-0 bg-[#285275] [clip-path:circle(50%_at_0%_50%)]"></div>
+    <section className="flex items-center relative justify-center bg-[#ECEEDF] h-screen px-0 py-0 md:py-[151px] md:px-[298px] overflow-hidden">
+      <div
+        className="absolute inset-0 bg-[#285275] 
+  sm:[clip-path:circle(50%_at_0%_50%)] 
+  [clip-path:circle(50%_at_50%_100%)]"
+      ></div>
 
       <div className="w-full h-full flex items-center justify-center z-30">
-        <div className="w-1/2 h-full bg-[url('/pexels-emrecan-2079684.jpg')] bg-no-repeat bg-center bg-cover"></div>
-        <div className="bg-white w-1/2 h-full flex flex-col">
+        <div className="md:w-1/2 hidden md:block h-full bg-[url('/pexels-emrecan-2079684.jpg')] bg-no-repeat bg-center bg-cover"></div>
+        <div className="bg-white w-full md:w-1/2  h-full flex flex-col">
           <div className="w-full flex items-center justify-end p-5">
             <Button className="bg-black text-white cursor-pointer rounded-none px-10">
               Login
