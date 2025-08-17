@@ -21,7 +21,7 @@ export default function page() {
             </Button>
           </div>
 
-          <div className="flex flex-col items-center justify-center px-10">
+          <div className="flex flex-col items-center justify-center px-10 flex-1 md:flex-0">
             <div className="w-full flex flex-col items-center gap-1.5 text-center">
               <h1 className="text-3xl font-semibold">Create Account</h1>
               <p className="text-md text-gray-500">Sign up to get started</p>
