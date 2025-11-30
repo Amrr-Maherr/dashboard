@@ -17,7 +17,7 @@ export default function SignupPage() {
           height={1000}
           quality={1000}
           priority={true}
-          src="/Assets/Images/chris-lee-70l1tDAI6rM-unsplash.png"
+          src="/Assets/Images/undraw_access-account_aydp.svg"
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover"
         />

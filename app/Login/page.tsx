@@ -16,7 +16,7 @@ export default function LoginPage() {
           height={1000}
           quality={1000}
           priority={true}
-          src="/Assets/Images/chris-lee-70l1tDAI6rM-unsplash.png"
+          src="/Assets/Images/undraw_login_weas.svg"
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover"
         />
