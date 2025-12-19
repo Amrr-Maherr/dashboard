@@ -1,8 +1,9 @@
 "use client"
 
 import * as React from "react"
+import { useQuery } from '@tanstack/react-query'
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-
+import api from '@/lib/api'
 
 import {
   Card,
@@ -145,15 +146,52 @@ export function ChartAreaInteractive() {
   const isMobile = useIsMobile()
   const [timeRange, setTimeRange] = React.useState("90d")
 
+  // Fetch orders data for chart
+  const { data: ordersData } = useQuery({
+    queryKey: ['orders-chart'],
+    queryFn: async () => {
+      const response = await api.get('/carts?limit=20')
+      return response.data.carts
+    },
+    staleTime: 5 * 60 * 1000,
+  })
+
   React.useEffect(() => {
     if (isMobile) {
       setTimeRange("7d")
     }
   }, [isMobile])
 
-  const filteredData = chartData.filter((item) => {
+  // Generate chart data from orders
+  const dynamicChartData = React.useMemo(() => {
+    if (!ordersData) return chartData // fallback to static data
+
+    // Create last 30 days data based on orders
+    const data = []
+    const today = new Date()
+
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date(today)
+      date.setDate(date.getDate() - i)
+      const dateStr = date.toISOString().split('T')[0]
+
+      // Simulate daily sales based on order totals
+      const dayOrders = ordersData.filter((order: any, index: number) => index % (30 - i) === 0)
+      const totalSales = dayOrders.reduce((sum: number, order: any) => sum + (order.total || 0), 0)
+
+      data.push({
+        date: dateStr,
+        desktop: Math.max(50, Math.floor(totalSales * 0.7)), // Desktop sales
+        mobile: Math.max(30, Math.floor(totalSales * 0.3)), // Mobile sales
+      })
+    }
+
+    return data
+  }, [ordersData])
+
+  const filteredData = dynamicChartData.filter((item) => {
     const date = new Date(item.date)
-    const referenceDate = new Date("2024-06-30")
+    const referenceDate = new Date()
     let daysToSubtract = 90
     if (timeRange === "30d") {
       daysToSubtract = 30
@@ -168,12 +206,12 @@ export function ChartAreaInteractive() {
   return (
     <Card className="@container/card">
       <CardHeader>
-        <CardTitle>Total Visitors</CardTitle>
+        <CardTitle>Sales Overview</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            Total for the last 3 months
+            Sales performance over time
           </span>
-          <span className="@[540px]/card:hidden">Last 3 months</span>
+          <span className="@[540px]/card:hidden">Sales data</span>
         </CardDescription>
         <CardAction>
           <ToggleGroup

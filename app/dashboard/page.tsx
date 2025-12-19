@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { DataTable } from "@/components/data-table"
@@ -8,10 +11,40 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
-
-import data from "./data.json"
+import { useOrders } from "@/Hooks/useOrders"
 
 export default function Page() {
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+
+  const { data: ordersResponse, isLoading } = useOrders(pageIndex, pageSize)
+
+  if (isLoading) {
+    return (
+      <ProtectedRoute>
+        <SidebarProvider
+          style={
+            {
+              "--sidebar-width": "calc(var(--spacing) * 72)",
+              "--header-height": "calc(var(--spacing) * 12)",
+            } as React.CSSProperties
+          }
+        >
+          <AppSidebar variant="floating" />
+          <SidebarInset>
+            <SiteHeader />
+            <div className="flex flex-1 flex-col items-center justify-center">
+              <div className="text-lg">Loading dashboard...</div>
+            </div>
+          </SidebarInset>
+        </SidebarProvider>
+      </ProtectedRoute>
+    )
+  }
+
+  const ordersData = ordersResponse?.data || []
+  const totalCount = ordersResponse?.total || 0
+
   return (
     <ProtectedRoute>
       <SidebarProvider
@@ -32,7 +65,14 @@ export default function Page() {
                 <div className="px-4 lg:px-6">
                   <ChartAreaInteractive />
                 </div>
-                <DataTable data={data} />
+                <DataTable
+                  data={ordersData}
+                  totalCount={totalCount}
+                  pageIndex={pageIndex}
+                  pageSize={pageSize}
+                  onPageChange={setPageIndex}
+                  onPageSizeChange={setPageSize}
+                />
               </div>
             </div>
           </div>
