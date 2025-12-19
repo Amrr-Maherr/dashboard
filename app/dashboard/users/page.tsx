@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { DataTable } from "@/components/data-table"
 import { SiteHeader } from "@/components/site-header"
@@ -11,7 +12,10 @@ import {
 import { useUsers } from "@/Hooks/useUsers"
 
 export default function UsersPage() {
-  const { data: usersData, isLoading, error } = useUsers()
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+
+  const { data: usersResponse, isLoading, error } = useUsers(pageIndex, pageSize)
 
   if (isLoading) {
     return (
@@ -59,16 +63,8 @@ export default function UsersPage() {
     )
   }
 
-  // Transform users data for DataTable
-  const transformedUsers = usersData?.map((user) => ({
-    id: user.id,
-    header: `${user.firstName} ${user.lastName}`,
-    type: user.company?.department || 'N/A',
-    status: 'Active',
-    target: user.age.toString(),
-    limit: user.company?.title || 'N/A',
-    reviewer: user.email,
-  })) || []
+  const usersData = usersResponse?.data || []
+  const totalCount = usersResponse?.total || 0
 
   return (
     <ProtectedRoute>
@@ -88,9 +84,16 @@ export default function UsersPage() {
               <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
                 <div className="px-4 lg:px-6">
                   <h1 className="text-2xl font-bold">Users Management</h1>
-                  <p className="text-muted-foreground">Manage your user accounts</p>
+                  <p className="text-muted-foreground">Manage your user accounts ({totalCount} total users)</p>
                 </div>
-                <DataTable data={transformedUsers} />
+                <DataTable
+                  data={usersData}
+                  totalCount={totalCount}
+                  pageIndex={pageIndex}
+                  pageSize={pageSize}
+                  onPageChange={setPageIndex}
+                  onPageSizeChange={setPageSize}
+                />
               </div>
             </div>
           </div>

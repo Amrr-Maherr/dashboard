@@ -17,8 +17,9 @@ export function AuthProvider({ children }) {
           const userData = await authService.getCurrentUser()
           setUser(userData)
         } catch (error) {
-          console.error('Failed to get current user:', error)
-          authService.logout()
+          // For dummyjson.com which doesn't support auth endpoints,
+          // just continue without logging out
+          console.warn('Auth endpoint not available, continuing without authentication')
         }
       }
       setIsLoading(false)
