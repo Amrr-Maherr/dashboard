@@ -13,10 +13,13 @@ import {
   IconHelp,
   IconInnerShadowTop,
   IconListDetails,
+  IconMessage,
+  IconNotes,
   IconReport,
   IconSearch,
   IconSettings,
   IconUsers,
+  IconCheck,
 } from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -59,6 +62,21 @@ const data = {
       title: "Orders",
       url: "/orders",
       icon: IconReport,
+    },
+    {
+      title: "Posts",
+      url: "/dashboard/posts",
+      icon: IconNotes,
+    },
+    {
+      title: "Todos",
+      url: "/dashboard/todos",
+      icon: IconCheck,
+    },
+    {
+      title: "Comments",
+      url: "/dashboard/comments",
+      icon: IconMessage,
     },
     {
       title: "Analytics",
