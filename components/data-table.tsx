@@ -360,9 +360,19 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
 export function DataTable({
   data: initialData,
   customColumns,
+  totalCount,
+  pageIndex: externalPageIndex,
+  pageSize: externalPageSize,
+  onPageChange,
+  onPageSizeChange,
 }: {
   data: z.infer<typeof schema>[]
   customColumns?: ColumnDef<z.infer<typeof schema>>[]
+  totalCount?: number
+  pageIndex?: number
+  pageSize?: number
+  onPageChange?: (pageIndex: number) => void
+  onPageSizeChange?: (pageSize: number) => void
 }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -376,9 +386,31 @@ export function DataTable({
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 10,
+    pageIndex: externalPageIndex ?? 0,
+    pageSize: externalPageSize ?? 10,
   })
+
+  // Sync with external pagination
+  React.useEffect(() => {
+    if (externalPageIndex !== undefined && externalPageSize !== undefined) {
+      setPagination({
+        pageIndex: externalPageIndex,
+        pageSize: externalPageSize,
+      })
+    }
+  }, [externalPageIndex, externalPageSize])
+
+  // Handle pagination changes
+  const handlePaginationChange = (updater: any) => {
+    const newPagination = typeof updater === 'function' ? updater(pagination) : updater
+    setPagination(newPagination)
+    if (onPageChange) {
+      onPageChange(newPagination.pageIndex)
+    }
+    if (onPageSizeChange) {
+      onPageSizeChange(newPagination.pageSize)
+    }
+  }
   const sortableId = React.useId()
   const sensors = useSensors(
     useSensor(MouseSensor, {}),

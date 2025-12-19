@@ -11,12 +11,19 @@ import {
 } from "@/components/ui/sidebar"
 import { useProducts } from "@/Hooks/useProducts"
 
+/**
+ * @typedef {Object} PaginatedProductsResponse
+ * @property {Array} data
+ * @property {number} total
+ * @property {number} limit
+ * @property {number} skip
+ */
+
 export default function ProductsPage() {
   const [pageIndex, setPageIndex] = useState(0)
   const [pageSize, setPageSize] = useState(10)
 
   const { data: productsResponse, isLoading, error } = useProducts(pageIndex, pageSize)
-  console.log(productsResponse, "products");
 
   if (isLoading) {
     return (
@@ -64,8 +71,10 @@ export default function ProductsPage() {
     )
   }
 
-  const productsData = productsResponse?.data || []
-  const totalCount = productsResponse?.total || 0
+  /** @type {PaginatedProductsResponse | undefined} */
+  const response = productsResponse
+  const productsData = response?.data || []
+  const totalCount = response?.total || 0
 
   return (
     <ProtectedRoute>
