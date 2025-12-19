@@ -389,11 +389,11 @@ export function DataTable({
   // Determine the detail page URL based on current route
   const getDetailUrl = (item: z.infer<typeof schema>) => {
     if (pathname.includes('/products')) {
-      return `/products/${item.id}`
+      return `/dashboard/products/${item.id}`
     } else if (pathname.includes('/users')) {
-      return `/users/${item.id}`
+      return `/dashboard/users/${item.id}`
     } else if (pathname.includes('/orders')) {
-      return `/orders/${item.id}`
+      return `/dashboard/orders/${item.id}`
     }
     return null
   }
@@ -693,11 +693,11 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
   // Determine the detail page URL based on current route
   const getDetailUrl = () => {
     if (pathname.includes('/products')) {
-      return `/products/${item.id}`
+      return `/dashboard/products/${item.id}`
     } else if (pathname.includes('/users')) {
-      return `/users/${item.id}`
+      return `/dashboard/users/${item.id}`
     } else if (pathname.includes('/orders')) {
-      return `/orders/${item.id}`
+      return `/dashboard/orders/${item.id}`
     }
     return null
   }
