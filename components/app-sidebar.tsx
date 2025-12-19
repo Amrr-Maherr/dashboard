@@ -42,13 +42,18 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
-      url: "#",
+      title: "Products",
+      url: "/products",
       icon: IconListDetails,
+    },
+    {
+      title: "Users",
+      url: "/users",
+      icon: IconUsers,
     },
     {
       title: "Analytics",
@@ -59,11 +64,6 @@ const data = {
       title: "Projects",
       url: "#",
       icon: IconFolder,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
     },
   ],
   navClouds: [
