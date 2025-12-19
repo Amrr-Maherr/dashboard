@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useRouter, usePathname } from "next/navigation"
 import {
   closestCenter,
   DndContext,
@@ -137,15 +138,16 @@ function DragHandle({ id }: { id: number }) {
   )
 }
 
-const columns: ColumnDef<z.infer<typeof schema>>[] = [
+// Helper function to create columns with dynamic detail URL generation
+const createColumns = (getDetailUrl: (item: z.infer<typeof schema>) => string | null, router: any) => [
   {
     id: "drag",
     header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original.id} />,
+    cell: ({ row }: { row: any }) => <DragHandle id={row.original.id} />,
   },
   {
     id: "select",
-    header: ({ table }) => (
+    header: ({ table }: { table: any }) => (
       <div className="flex items-center justify-center">
         <Checkbox
           checked={
@@ -157,7 +159,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         />
       </div>
     ),
-    cell: ({ row }) => (
+    cell: ({ row }: { row: any }) => (
       <div className="flex items-center justify-center">
         <Checkbox
           checked={row.getIsSelected()}
@@ -172,7 +174,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     accessorKey: "header",
     header: "Header",
-    cell: ({ row }) => {
+    cell: ({ row }: { row: any }) => {
       return <TableCellViewer item={row.original} />
     },
     enableHiding: false,
@@ -180,7 +182,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     accessorKey: "type",
     header: "Section Type",
-    cell: ({ row }) => (
+    cell: ({ row }: { row: any }) => (
       <div className="w-32">
         <Badge variant="outline" className="text-muted-foreground px-1.5">
           {row.original.type}
@@ -191,7 +193,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => (
+    cell: ({ row }: { row: any }) => (
       <Badge variant="outline" className="text-muted-foreground px-1.5">
         {row.original.status === "Done" ? (
           <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
@@ -205,7 +207,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     accessorKey: "target",
     header: () => <div className="w-full text-right">Target</div>,
-    cell: ({ row }) => (
+    cell: ({ row }: { row: any }) => (
       <form
         onSubmit={(e) => {
           e.preventDefault()
@@ -230,7 +232,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     accessorKey: "limit",
     header: () => <div className="w-full text-right">Limit</div>,
-    cell: ({ row }) => (
+    cell: ({ row }: { row: any }) => (
       <form
         onSubmit={(e) => {
           e.preventDefault()
@@ -255,7 +257,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     accessorKey: "reviewer",
     header: "Reviewer",
-    cell: ({ row }) => {
+    cell: ({ row }: { row: any }) => {
       const isAssigned = row.original.reviewer !== "Assign reviewer"
 
       if (isAssigned) {
@@ -284,6 +286,24 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
           </Select>
         </>
       )
+    },
+  },
+  {
+    id: "details",
+    header: () => <div className="text-center">Details</div>,
+    cell: ({ row }: { row: any }) => {
+      const detailUrl = getDetailUrl(row.original)
+      return detailUrl ? (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => router.push(detailUrl)}
+          className="text-blue-600 hover:text-blue-800"
+        >
+          <IconChevronRight className="size-4" />
+          <span className="sr-only">View details</span>
+        </Button>
+      ) : null
     },
   },
   {
@@ -342,8 +362,11 @@ export function DataTable({
   customColumns,
 }: {
   data: z.infer<typeof schema>[]
-  customColumns?: typeof columns
+  customColumns?: ColumnDef<z.infer<typeof schema>>[]
 }) {
+  const router = useRouter()
+  const pathname = usePathname()
+
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -363,6 +386,18 @@ export function DataTable({
     useSensor(KeyboardSensor, {})
   )
 
+  // Determine the detail page URL based on current route
+  const getDetailUrl = (item: z.infer<typeof schema>) => {
+    if (pathname.includes('/products')) {
+      return `/products/${item.id}`
+    } else if (pathname.includes('/users')) {
+      return `/users/${item.id}`
+    } else if (pathname.includes('/orders')) {
+      return `/orders/${item.id}`
+    }
+    return null
+  }
+
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
     [data]
@@ -370,7 +405,7 @@ export function DataTable({
 
   const table = useReactTable({
     data,
-    columns: customColumns || columns,
+    columns: customColumns || createColumns(getDetailUrl, router),
     state: {
       sorting,
       columnVisibility,
@@ -522,7 +557,7 @@ export function DataTable({
                 ) : (
                   <TableRow>
                     <TableCell
-                      colSpan={columns.length}
+                      colSpan={9}
                       className="h-24 text-center"
                     >
                       No results.
@@ -652,13 +687,39 @@ const chartConfig = {
 
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
   const isMobile = useIsMobile()
+  const router = useRouter()
+  const pathname = usePathname()
+
+  // Determine the detail page URL based on current route
+  const getDetailUrl = () => {
+    if (pathname.includes('/products')) {
+      return `/products/${item.id}`
+    } else if (pathname.includes('/users')) {
+      return `/users/${item.id}`
+    } else if (pathname.includes('/orders')) {
+      return `/orders/${item.id}`
+    }
+    return null
+  }
+
+  const detailUrl = getDetailUrl()
 
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
-        <Button variant="link" className="text-foreground w-fit px-0 text-left">
-          {item.header}
-        </Button>
+        {detailUrl ? (
+          <Button
+            variant="link"
+            className="text-foreground w-fit px-0 text-left"
+            onClick={() => router.push(detailUrl)}
+          >
+            {item.header}
+          </Button>
+        ) : (
+          <Button variant="link" className="text-foreground w-fit px-0 text-left">
+            {item.header}
+          </Button>
+        )}
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="gap-1">
