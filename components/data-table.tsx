@@ -386,17 +386,8 @@ export function DataTable({
     useSensor(KeyboardSensor, {})
   )
 
-  // Determine the detail page URL based on current route
-  const getDetailUrl = (item: z.infer<typeof schema>) => {
-    if (pathname.includes('/products')) {
-      return `/dashboard/products/${item.id}`
-    } else if (pathname.includes('/users')) {
-      return `/dashboard/users/${item.id}`
-    } else if (pathname.includes('/orders')) {
-      return `/dashboard/orders/${item.id}`
-    }
-    return null
-  }
+  // Always show details in drawer
+  const getDetailUrl = (item: z.infer<typeof schema>) => null
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
@@ -704,6 +695,255 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
 
   const detailUrl = getDetailUrl()
 
+  // For posts, todos, comments, show details in drawer
+  const renderDrawerContent = () => {
+    if (pathname.includes('/posts')) {
+      return (
+        <>
+          <DrawerHeader className="gap-1">
+            <DrawerTitle>Post Details</DrawerTitle>
+            <DrawerDescription>
+              Post ID: {item.id}
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
+            <div className="space-y-4">
+              <div>
+                <Label className="font-semibold">Title:</Label>
+                <p>{item.header}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Tags:</Label>
+                <p>{item.type}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Views:</Label>
+                <p>{item.target}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Likes:</Label>
+                <p>{item.limit}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">User ID:</Label>
+                <p>{item.reviewer}</p>
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    } else if (pathname.includes('/todos')) {
+      return (
+        <>
+          <DrawerHeader className="gap-1">
+            <DrawerTitle>Todo Details</DrawerTitle>
+            <DrawerDescription>
+              Todo ID: {item.id}
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
+            <div className="space-y-4">
+              <div>
+                <Label className="font-semibold">Task:</Label>
+                <p>{item.header}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Status:</Label>
+                <Badge variant={item.status === 'Completed' ? 'default' : 'secondary'}>
+                  {item.status}
+                </Badge>
+              </div>
+              <div>
+                <Label className="font-semibold">User ID:</Label>
+                <p>{item.reviewer}</p>
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    } else if (pathname.includes('/comments')) {
+      return (
+        <>
+          <DrawerHeader className="gap-1">
+            <DrawerTitle>Comment Details</DrawerTitle>
+            <DrawerDescription>
+              Comment ID: {item.id}
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
+            <div className="space-y-4">
+              <div>
+                <Label className="font-semibold">Comment:</Label>
+                <p>{item.header}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Post ID:</Label>
+                <p>{item.target}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Author:</Label>
+                <p>{item.reviewer}</p>
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    } else if (pathname.includes('/products')) {
+      return (
+        <>
+          <DrawerHeader className="gap-1">
+            <DrawerTitle>Product Details</DrawerTitle>
+            <DrawerDescription>
+              Product ID: {item.id}
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
+            <div className="space-y-4">
+              <div>
+                <Label className="font-semibold">Name:</Label>
+                <p>{item.header}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Category:</Label>
+                <p>{item.type}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Price:</Label>
+                <p>${item.target}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Discount:</Label>
+                <p>{item.limit}%</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Brand:</Label>
+                <p>{item.reviewer}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Status:</Label>
+                <Badge variant={item.status === 'In Stock' ? 'default' : 'destructive'}>
+                  {item.status}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    } else if (pathname.includes('/users')) {
+      return (
+        <>
+          <DrawerHeader className="gap-1">
+            <DrawerTitle>User Details</DrawerTitle>
+            <DrawerDescription>
+              User ID: {item.id}
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
+            <div className="space-y-4">
+              <div>
+                <Label className="font-semibold">Name:</Label>
+                <p>{item.header}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Department:</Label>
+                <p>{item.type}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Age:</Label>
+                <p>{item.target}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Job Title:</Label>
+                <p>{item.limit}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Email:</Label>
+                <p>{item.reviewer}</p>
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    } else if (pathname.includes('/orders')) {
+      return (
+        <>
+          <DrawerHeader className="gap-1">
+            <DrawerTitle>Order Details</DrawerTitle>
+            <DrawerDescription>
+              Order ID: {item.id}
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
+            <div className="space-y-4">
+              <div>
+                <Label className="font-semibold">Order:</Label>
+                <p>{item.header}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Customer ID:</Label>
+                <p>{item.type}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Total:</Label>
+                <p>${item.target}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Items:</Label>
+                <p>{item.limit}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Status:</Label>
+                <Badge variant={item.status === 'Completed' ? 'default' : 'secondary'}>
+                  {item.status}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    } else {
+      // Default drawer content
+      return (
+        <>
+          <DrawerHeader className="gap-1">
+            <DrawerTitle>{item.header}</DrawerTitle>
+            <DrawerDescription>
+              Item details
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
+            <div className="space-y-4">
+              <div>
+                <Label className="font-semibold">Header:</Label>
+                <p>{item.header}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Type:</Label>
+                <p>{item.type}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Status:</Label>
+                <p>{item.status}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Target:</Label>
+                <p>{item.target}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Limit:</Label>
+                <p>{item.limit}</p>
+              </div>
+              <div>
+                <Label className="font-semibold">Reviewer:</Label>
+                <p>{item.reviewer}</p>
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    }
+  }
+
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
@@ -722,147 +962,10 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
         )}
       </DrawerTrigger>
       <DrawerContent>
-        <DrawerHeader className="gap-1">
-          <DrawerTitle>{item.header}</DrawerTitle>
-          <DrawerDescription>
-            Showing total visitors for the last 6 months
-          </DrawerDescription>
-        </DrawerHeader>
-        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-          {!isMobile && (
-            <>
-              <ChartContainer config={chartConfig}>
-                <AreaChart
-                  accessibilityLayer
-                  data={chartData}
-                  margin={{
-                    left: 0,
-                    right: 10,
-                  }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="month"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    tickFormatter={(value) => value.slice(0, 3)}
-                    hide
-                  />
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent indicator="dot" />}
-                  />
-                  <Area
-                    dataKey="mobile"
-                    type="natural"
-                    fill="var(--color-mobile)"
-                    fillOpacity={0.6}
-                    stroke="var(--color-mobile)"
-                    stackId="a"
-                  />
-                  <Area
-                    dataKey="desktop"
-                    type="natural"
-                    fill="var(--color-desktop)"
-                    fillOpacity={0.4}
-                    stroke="var(--color-desktop)"
-                    stackId="a"
-                  />
-                </AreaChart>
-              </ChartContainer>
-              <Separator />
-              <div className="grid gap-2">
-                <div className="flex gap-2 leading-none font-medium">
-                  Trending up by 5.2% this month{" "}
-                  <IconTrendingUp className="size-4" />
-                </div>
-                <div className="text-muted-foreground">
-                  Showing total visitors for the last 6 months. This is just
-                  some random text to test the layout. It spans multiple lines
-                  and should wrap around.
-                </div>
-              </div>
-              <Separator />
-            </>
-          )}
-          <form className="flex flex-col gap-4">
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="header">Header</Label>
-              <Input id="header" defaultValue={item.header} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="type">Type</Label>
-                <Select defaultValue={item.type}>
-                  <SelectTrigger id="type" className="w-full">
-                    <SelectValue placeholder="Select a type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Table of Contents">
-                      Table of Contents
-                    </SelectItem>
-                    <SelectItem value="Executive Summary">
-                      Executive Summary
-                    </SelectItem>
-                    <SelectItem value="Technical Approach">
-                      Technical Approach
-                    </SelectItem>
-                    <SelectItem value="Design">Design</SelectItem>
-                    <SelectItem value="Capabilities">Capabilities</SelectItem>
-                    <SelectItem value="Focus Documents">
-                      Focus Documents
-                    </SelectItem>
-                    <SelectItem value="Narrative">Narrative</SelectItem>
-                    <SelectItem value="Cover Page">Cover Page</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="status">Status</Label>
-                <Select defaultValue={item.status}>
-                  <SelectTrigger id="status" className="w-full">
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Done">Done</SelectItem>
-                    <SelectItem value="In Progress">In Progress</SelectItem>
-                    <SelectItem value="Not Started">Not Started</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="target">Target</Label>
-                <Input id="target" defaultValue={item.target} />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="limit">Limit</Label>
-                <Input id="limit" defaultValue={item.limit} />
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="reviewer">Reviewer</Label>
-              <Select defaultValue={item.reviewer}>
-                <SelectTrigger id="reviewer" className="w-full">
-                  <SelectValue placeholder="Select a reviewer" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-                  <SelectItem value="Jamik Tashpulatov">
-                    Jamik Tashpulatov
-                  </SelectItem>
-                  <SelectItem value="Emily Whalen">Emily Whalen</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </form>
-        </div>
+        {renderDrawerContent()}
         <DrawerFooter>
-          <Button>Submit</Button>
           <DrawerClose asChild>
-            <Button variant="outline">Done</Button>
+            <Button variant="outline">Close</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

@@ -13,9 +13,9 @@ import { useUsers } from "@/Hooks/useUsers"
 export default function UsersPage() {
   const { data: usersData, isLoading, error } = useUsers()
 
-  return (
-    <ProtectedRoute>
-      {isLoading ? (
+  if (isLoading) {
+    return (
+      <ProtectedRoute>
         <SidebarProvider
           style={
             {
@@ -32,7 +32,13 @@ export default function UsersPage() {
             </div>
           </SidebarInset>
         </SidebarProvider>
-      ) : error ? (
+      </ProtectedRoute>
+    )
+  }
+
+  if (error) {
+    return (
+      <ProtectedRoute>
         <SidebarProvider
           style={
             {
@@ -49,32 +55,47 @@ export default function UsersPage() {
             </div>
           </SidebarInset>
         </SidebarProvider>
-      ) : (
-        <SidebarProvider
-          style={
-            {
-              "--sidebar-width": "calc(var(--spacing) * 72)",
-              "--header-height": "calc(var(--spacing) * 12)",
-            } as React.CSSProperties
-          }
-        >
-          <AppSidebar variant="floating" />
-          <SidebarInset>
-            <SiteHeader />
-            <div className="flex flex-1 flex-col">
-              <div className="@container/main flex flex-1 flex-col gap-2">
-                <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                  <div className="px-4 lg:px-6">
-                    <h1 className="text-2xl font-bold">Users Management</h1>
-                    <p className="text-muted-foreground">Manage your user accounts</p>
-                  </div>
-                  <DataTable data={usersData} />
+      </ProtectedRoute>
+    )
+  }
+
+  // Transform users data for DataTable
+  const transformedUsers = usersData?.map((user) => ({
+    id: user.id,
+    header: `${user.firstName} ${user.lastName}`,
+    type: user.company?.department || 'N/A',
+    status: 'Active',
+    target: user.age.toString(),
+    limit: user.company?.title || 'N/A',
+    reviewer: user.email,
+  })) || []
+
+  return (
+    <ProtectedRoute>
+      <SidebarProvider
+        style={
+          {
+            "--sidebar-width": "calc(var(--spacing) * 72)",
+            "--header-height": "calc(var(--spacing) * 12)",
+          } as React.CSSProperties
+        }
+      >
+        <AppSidebar variant="floating" />
+        <SidebarInset>
+          <SiteHeader />
+          <div className="flex flex-1 flex-col">
+            <div className="@container/main flex flex-1 flex-col gap-2">
+              <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                <div className="px-4 lg:px-6">
+                  <h1 className="text-2xl font-bold">Users Management</h1>
+                  <p className="text-muted-foreground">Manage your user accounts</p>
                 </div>
+                <DataTable data={transformedUsers} />
               </div>
             </div>
-          </SidebarInset>
-        </SidebarProvider>
-      )}
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
     </ProtectedRoute>
   )
 }
