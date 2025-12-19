@@ -14,6 +14,17 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+/**
+ * @typedef {Object} Cart
+ * @property {number} id
+ * @property {Array} products
+ * @property {number} total
+ * @property {number} discountedTotal
+ * @property {number} userId
+ * @property {number} totalProducts
+ * @property {number} totalQuantity
+ */
+
 export function SectionCards() {
   // Fetch statistics from APIs
   const { data: productsStats } = useQuery({
@@ -44,7 +55,7 @@ export function SectionCards() {
   })
 
   // Calculate total revenue from orders
-  const totalRevenue = ordersStats?.carts?.reduce((sum, cart) => sum + (cart.total || 0), 0) || 0
+  const totalRevenue = ordersStats?.carts?.reduce((sum: number, cart: any) => sum + (cart.total || 0), 0) || 0 // eslint-disable-line @typescript-eslint/no-explicit-any
 
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
