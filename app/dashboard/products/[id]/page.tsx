@@ -14,6 +14,20 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 
+interface Brand {
+  _id: string
+  name: string
+  slug: string
+  image: string
+}
+
+interface Category {
+  _id: string
+  name: string
+  slug: string
+  image: string
+}
+
 interface Product {
   id: string
   title: string
@@ -22,8 +36,8 @@ interface Product {
   quantity: number
   imageCover: string
   images: string[]
-  category: any
-  brand: any
+  category?: Category
+  brand?: Brand
   ratingsAverage: number
   ratingsQuantity: number
   sold: number
@@ -192,11 +206,11 @@ export default function ProductDetailPage() {
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <span className="font-semibold">Brand:</span>
-                            <p>{product.brand.name}</p>
+                            <p>{product.brand?.name || 'Unknown'}</p>
                           </div>
                           <div>
                             <span className="font-semibold">Category:</span>
-                            <Badge variant="outline">{product.category.name}</Badge>
+                            <Badge variant="outline">{product.category?.name || 'Unknown'}</Badge>
                           </div>
                         </div>
                       </CardContent>
