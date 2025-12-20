@@ -1,33 +1,35 @@
 # Dashboard Management System
 
-A modern, responsive dashboard application built with Next.js 14+ that provides comprehensive management capabilities for products, users, orders, posts, todos, and comments. The application features real-time data visualization, server-side pagination, and a clean, intuitive user interface.
+A modern, responsive dashboard application built with Next.js 16+ that provides comprehensive e-commerce management capabilities. The application integrates with RouteMisr API to manage products, categories, subcategories, brands, and orders with real-time data visualization, advanced analytics, and an intuitive user interface.
 
 ## 🚀 Features
 
 ### Core Functionality
-- **Dashboard Overview**: Real-time statistics and charts displaying key metrics
-- **Product Management**: Complete CRUD operations for product inventory
-- **User Management**: User account management and profiles
+- **Dashboard Overview**: Real-time statistics and interactive charts
+- **Product Management**: Complete product inventory with detailed views
+- **Category Management**: Product categories and subcategories management
+- **Brand Management**: Brand portfolio management
 - **Order Management**: Order tracking and transaction management
-- **Content Management**: Posts, todos, and comments management
+- **Analytics Dashboard**: Comprehensive data visualization and insights
 - **Authentication System**: Secure login/logout functionality
 
 ### Advanced Features
 - **Server-side Pagination**: Efficient data loading with pagination support
-- **Real-time Charts**: Interactive charts showing sales performance and trends
+- **Advanced Analytics**: Multiple chart types (Pie, Bar, Line) for data insights
+- **Dynamic Statistics**: Live-updating dashboard cards with real API data
+- **Separate Table Components**: Custom tables for each data type
+- **Detailed Views**: Individual detail pages for all entities
 - **Responsive Design**: Mobile-first design that works on all devices
-- **Dynamic Statistics**: Live-updating dashboard cards with API data
-- **Drag & Drop Tables**: Reorderable table rows with smooth animations
-- **Advanced Filtering**: Column filtering and search capabilities
-- **Export Functionality**: Data export capabilities for reports
+- **Real-time Data**: Live data fetching from RouteMisr API
 
 ### Technical Features
-- **Next.js 14+**: Latest App Router with server components
+- **Next.js 16+**: Latest App Router with server components
 - **TypeScript**: Full type safety throughout the application
 - **Tailwind CSS**: Modern, responsive styling
 - **TanStack Query**: Powerful data fetching and caching
 - **shadcn/ui**: Beautiful, accessible UI components
-- **Server-side Rendering**: Optimized performance and SEO
+- **Recharts**: Advanced charting library for data visualization
+- **RouteMisr API**: Real e-commerce API integration
 
 ## 📋 Prerequisites
 
@@ -77,24 +79,30 @@ dashboard/
 ├── app/                          # Next.js App Router
 │   ├── dashboard/               # Main dashboard pages
 │   │   ├── page.tsx            # Dashboard overview
-│   │   ├── products/           # Product management
-│   │   ├── users/              # User management
+│   │   ├── analytics/          # Analytics & charts
+│   │   ├── brands/             # Brand management
+│   │   ├── categories/         # Category management
 │   │   ├── orders/             # Order management
-│   │   ├── posts/              # Posts management
-│   │   ├── todos/              # Todos management
-│   │   └── comments/           # Comments management
+│   │   ├── products/           # Product management
+│   │   └── subcategories/      # Subcategory management
 │   ├── layout.tsx              # Root layout
 │   └── page.tsx                # Landing page
 ├── components/                  # Reusable components
 │   ├── ui/                     # shadcn/ui components
 │   ├── app-sidebar.tsx         # Navigation sidebar
-│   ├── data-table.tsx          # Advanced data table
+│   ├── data-table.tsx          # Base data table component
 │   ├── section-cards.tsx       # Dashboard statistics
-│   └── chart-area-interactive.tsx # Interactive charts
+│   ├── chart-area-interactive.tsx # Interactive charts
+│   ├── ProductTable.tsx        # Products table
+│   ├── CategoryTable.tsx       # Categories table
+│   └── OrderTable.tsx          # Orders table
 ├── Hooks/                      # Custom React hooks
 │   ├── useProducts.js          # Products data management
-│   ├── useUsers.js             # Users data management
+│   ├── useCategories.js        # Categories data management
+│   ├── useSubcategories.js     # Subcategories data management
+│   ├── useBrands.js            # Brands data management
 │   ├── useOrders.js            # Orders data management
+│   ├── useChartData.js         # Chart data management
 │   └── use-mobile.ts           # Mobile detection
 ├── lib/                        # Utility functions
 │   ├── api.js                  # API client configuration
@@ -109,20 +117,20 @@ dashboard/
 
 ## 🔧 API Integration
 
-The application integrates with [DummyJSON API](https://dummyjson.com/) for mock data:
+The application integrates with [RouteMisr E-commerce API](https://ecommerce.routemisr.com/api/v1/) for real e-commerce data:
 
-- **Products API**: `/products` - Product inventory management
-- **Users API**: `/users` - User account management
-- **Orders API**: `/carts` - Shopping cart and order data
-- **Posts API**: `/posts` - Content management
-- **Todos API**: `/todos` - Task management
-- **Comments API**: `/comments` - Comment system
+- **Products API**: `/products` - Complete product catalog with ratings and images
+- **Categories API**: `/categories` - Product categories management
+- **Subcategories API**: `/subcategories` - Detailed product classification
+- **Brands API**: `/brands` - Brand portfolio management
+- **Orders API**: `/orders` - Order tracking and transaction data
 
 ### API Features Used:
-- Server-side pagination with `limit` and `skip` parameters
+- Server-side pagination with `page` and `limit` parameters
 - Real-time data fetching with caching
 - Error handling and retry logic
 - Automatic data refresh
+- Detailed product information with images and specifications
 
 ## 🎨 UI/UX Features
 
@@ -202,7 +210,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [shadcn/ui](https://ui.shadcn.com/) - Beautiful UI components
 - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 - [TanStack Query](https://tanstack.com/query/) - Data fetching library
-- [DummyJSON](https://dummyjson.com/) - Mock API service
+- [Recharts](https://recharts.org/) - Composable charting library
+- [RouteMisr](https://ecommerce.routemisr.com/) - E-commerce API
 - [Tabler Icons](https://tabler.io/icons) - Icon library
 
 ## 📞 Support
