@@ -43,7 +43,6 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   Row,
   SortingState,
@@ -395,6 +394,9 @@ export function DataTable({
     pageIndex: externalPageIndex ?? 0,
     pageSize: externalPageSize ?? 10,
   });
+  const [pageCount, setPageCount] = React.useState(
+    totalCount ? Math.ceil(totalCount / (externalPageSize ?? 10)) : -1
+  );
 
   const [open, setOpen] = React.useState(false);
   const [formData, setFormData] = React.useState({
@@ -421,7 +423,11 @@ export function DataTable({
     });
   };
 
-  // Sync with external pagination
+  // Sync with external data and pagination
+  React.useEffect(() => {
+    setData(initialData);
+  }, [initialData]);
+
   React.useEffect(() => {
     if (externalPageIndex !== undefined && externalPageSize !== undefined) {
       setPagination({
@@ -430,6 +436,12 @@ export function DataTable({
       });
     }
   }, [externalPageIndex, externalPageSize]);
+
+  React.useEffect(() => {
+    if (totalCount !== undefined && pagination.pageSize) {
+      setPageCount(Math.ceil(totalCount / pagination.pageSize));
+    }
+  }, [totalCount, pagination.pageSize]);
 
   // Handle pagination changes
   const handlePaginationChange = (updater: any) => {
@@ -468,16 +480,17 @@ export function DataTable({
       columnFilters,
       pagination,
     },
+    pageCount,
+    manualPagination: true,
     getRowId: (row) => row.id.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination,
+    onPaginationChange: handlePaginationChange,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
