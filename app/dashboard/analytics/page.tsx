@@ -75,11 +75,11 @@ export default function AnalyticsPage() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-4 lg:px-6">
-                  {/* Categories Distribution Pie Chart */}
+                  {/* Orders by User Pie Chart */}
                   <Card>
                     <CardHeader>
-                      <CardTitle>Products by Category</CardTitle>
-                      <CardDescription>Distribution of products across categories</CardDescription>
+                      <CardTitle>Orders by User</CardTitle>
+                      <CardDescription>Distribution of orders across users</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <ResponsiveContainer width="100%" height={300}>

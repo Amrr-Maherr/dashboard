@@ -1,135 +1,150 @@
 import { useQuery } from '@tanstack/react-query'
-import api from '@/lib/api'
 
 /**
- * Hook to get chart data for analytics
+ * Hook to get chart data for analytics from dummyjson
  */
 export const useChartData = () => {
-  // Categories distribution
-  const categoriesQuery = useQuery({
-    queryKey: ['chart', 'categories'],
+  // Orders (carts) distribution by user
+  const ordersByUserQuery = useQuery({
+    queryKey: ['chart', 'orders-by-user'],
     queryFn: async () => {
-      const response = await api.get('/categories?limit=20')
-      const categories = Array.isArray(response.data) ? response.data : response.data.data || []
+      const response = await fetch('https://dummyjson.com/carts?limit=100')
+      const data = await response.json()
+      const carts = data.carts || []
 
-      // Get products count per category
-      const categoryStats = await Promise.all(
-        categories.slice(0, 10).map(async (cat) => {
-          try {
-            const productsResponse = await api.get(`/products?category=${cat._id}&limit=1`)
-            const count = Array.isArray(productsResponse.data)
-              ? productsResponse.data.length
-              : productsResponse.data.results || 0
-            return {
-              name: cat.name,
-              value: count,
-              fill: `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`
-            }
-          } catch {
-            return {
-              name: cat.name,
-              value: 0,
-              fill: `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`
-            }
-          }
-        })
-      )
+      // Group carts by userId and count
+      const userStats = carts.reduce((acc, cart) => {
+        const userId = cart.userId
+        if (!acc[userId]) {
+          acc[userId] = { carts: 0, totalValue: 0 }
+        }
+        acc[userId].carts += 1
+        acc[userId].totalValue += cart.discountedTotal || cart.total
+        return acc
+      }, {})
 
-      return categoryStats.filter(item => item.value > 0)
+      // Convert to chart format
+      return Object.entries(userStats)
+        .sort(([,a], [,b]) => b.carts - a.carts)
+        .slice(0, 10)
+        .map(([userId, stats], index) => ({
+          name: `User ${userId}`,
+          value: stats.carts,
+          fill: `hsl(${index * 36}, 70%, 50%)`
+        }))
     },
     staleTime: 10 * 60 * 1000, // 10 minutes
   })
 
-  // Brands distribution
-  const brandsQuery = useQuery({
-    queryKey: ['chart', 'brands'],
+  // Cart value distribution
+  const cartValueQuery = useQuery({
+    queryKey: ['chart', 'cart-values'],
     queryFn: async () => {
-      const response = await api.get('/brands?limit=20')
-      const brands = Array.isArray(response.data) ? response.data : response.data.data || []
+      const response = await fetch('https://dummyjson.com/carts?limit=100')
+      const data = await response.json()
+      const carts = data.carts || []
 
-      // Get products count per brand
-      const brandStats = await Promise.all(
-        brands.slice(0, 10).map(async (brand) => {
-          try {
-            const productsResponse = await api.get(`/products?brand=${brand._id}&limit=1`)
-            const count = Array.isArray(productsResponse.data)
-              ? productsResponse.data.length
-              : productsResponse.data.results || 0
-            return {
-              name: brand.name,
-              products: count,
-              fill: `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`
-            }
-          } catch {
-            return {
-              name: brand.name,
-              products: 0,
-              fill: `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`
-            }
-          }
-        })
-      )
+      // Group carts by value ranges
+      const valueRanges = [
+        { range: '$0-$100', min: 0, max: 100 },
+        { range: '$101-$300', min: 101, max: 300 },
+        { range: '$301-$600', min: 301, max: 600 },
+        { range: '$601-$1000', min: 601, max: 1000 },
+        { range: '$1000+', min: 1001, max: Infinity }
+      ]
 
-      return brandStats.filter(item => item.products > 0)
+      const rangeStats = valueRanges.map(range => ({
+        name: range.range,
+        carts: carts.filter(cart => {
+          const value = cart.discountedTotal || cart.total
+          return value >= range.min && value <= range.max
+        }).length,
+        fill: `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`
+      }))
+
+      return rangeStats.filter(item => item.carts > 0)
     },
     staleTime: 10 * 60 * 1000,
   })
 
-  // Top products by ratings
+  // Top products by quantity sold
   const topProductsQuery = useQuery({
     queryKey: ['chart', 'top-products'],
     queryFn: async () => {
-      const response = await api.get('/products?limit=20&sort=-ratingsAverage')
-      const products = Array.isArray(response.data) ? response.data : response.data.data || []
+      const response = await fetch('https://dummyjson.com/carts?limit=100')
+      const data = await response.json()
+      const carts = data.carts || []
 
-      return products.slice(0, 10).map(product => ({
-        name: product.title.length > 30 ? product.title.substring(0, 30) + '...' : product.title,
-        rating: product.ratingsAverage || 0,
-        price: product.price,
-      }))
-    },
-    staleTime: 10 * 60 * 1000,
-  })
+      // Aggregate product quantities across all carts
+      const productStats = {}
 
-  // Sales over time (mock data based on orders)
-  const salesQuery = useQuery({
-    queryKey: ['chart', 'sales'],
-    queryFn: async () => {
-      const response = await api.get('/orders?limit=50')
-      const orders = Array.isArray(response.data) ? response.data : response.data.data || []
+      carts.forEach(cart => {
+        cart.products.forEach(product => {
+          if (!productStats[product.id]) {
+            productStats[product.id] = {
+              id: product.id,
+              title: product.title,
+              totalQuantity: 0,
+              totalValue: 0
+            }
+          }
+          productStats[product.id].totalQuantity += product.quantity
+          productStats[product.id].totalValue += product.total
+        })
+      })
 
-      // Group by month
-      const monthlySales = orders.reduce((acc, order) => {
-        const date = new Date(order.createdAt)
-        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-
-        if (!acc[monthKey]) {
-          acc[monthKey] = { total: 0, count: 0 }
-        }
-        acc[monthKey].total += order.totalOrderPrice || 0
-        acc[monthKey].count += 1
-
-        return acc
-      }, {})
-
-      return Object.entries(monthlySales)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .slice(-6) // Last 6 months
-        .map(([month, data]) => ({
-          month: new Date(month + '-01').toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-          sales: data.total,
-          orders: data.count,
+      return Object.values(productStats)
+        .sort((a, b) => b.totalQuantity - a.totalQuantity)
+        .slice(0, 10)
+        .map(product => ({
+          name: product.title.length > 30 ? product.title.substring(0, 30) + '...' : product.title,
+          quantity: product.totalQuantity,
+          value: product.totalValue,
         }))
     },
     staleTime: 10 * 60 * 1000,
   })
 
+  // Sales over time based on cart data
+  const salesQuery = useQuery({
+    queryKey: ['chart', 'sales'],
+    queryFn: async () => {
+      // Since dummyjson carts don't have dates, we'll create mock monthly data
+      // based on cart totals and simulate time series
+      const response = await fetch('https://dummyjson.com/carts?limit=100')
+      const data = await response.json()
+      const carts = data.carts || []
+
+      // Create mock monthly data for the last 6 months
+      const months = []
+      const now = new Date()
+      for (let i = 5; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
+        months.push({
+          month: date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+          sales: 0,
+          orders: 0
+        })
+      }
+
+      // Distribute cart data across months
+      carts.forEach((cart, index) => {
+        const monthIndex = index % 6
+        months[monthIndex].sales += cart.discountedTotal || cart.total
+        months[monthIndex].orders += 1
+      })
+
+      return months
+    },
+    staleTime: 10 * 60 * 1000,
+  })
+
   return {
-    categories: categoriesQuery.data || [],
-    brands: brandsQuery.data || [],
+    categories: ordersByUserQuery.data || [], // Using orders by user as categories
+    brands: cartValueQuery.data || [], // Using cart value ranges as brands
     topProducts: topProductsQuery.data || [],
     sales: salesQuery.data || [],
-    isLoading: categoriesQuery.isLoading || brandsQuery.isLoading || topProductsQuery.isLoading || salesQuery.isLoading,
-    error: categoriesQuery.error || brandsQuery.error || topProductsQuery.error || salesQuery.error,
+    isLoading: ordersByUserQuery.isLoading || cartValueQuery.isLoading || topProductsQuery.isLoading || salesQuery.isLoading,
+    error: ordersByUserQuery.error || cartValueQuery.error || topProductsQuery.error || salesQuery.error,
   }
 }
