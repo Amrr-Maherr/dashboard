@@ -1,15 +1,16 @@
 # Dashboard Management System
 
-A modern, responsive dashboard application built with Next.js 16+ that provides comprehensive e-commerce management capabilities. The application integrates with RouteMisr API to manage products, categories, subcategories, brands, and orders with real-time data visualization, advanced analytics, and an intuitive user interface.
+A modern, responsive dashboard application built with Next.js 16+ that provides comprehensive e-commerce management capabilities. The application integrates with DummyJSON API for users and orders management, and RouteMisr API for products, categories, subcategories, and brands management, with real-time data visualization, advanced analytics, and an intuitive user interface.
 
 ## 🚀 Features
 
 ### Core Functionality
 - **Dashboard Overview**: Real-time statistics and interactive charts
+- **User Management**: Complete user profiles with detailed information
 - **Product Management**: Complete product inventory with detailed views
 - **Category Management**: Product categories and subcategories management
 - **Brand Management**: Brand portfolio management
-- **Order Management**: Order tracking and transaction management
+- **Order Management**: Order tracking and transaction management from DummyJSON
 - **Analytics Dashboard**: Comprehensive data visualization and insights
 - **Authentication System**: Secure login/logout functionality
 
@@ -83,8 +84,15 @@ dashboard/
 │   │   ├── brands/             # Brand management
 │   │   ├── categories/         # Category management
 │   │   ├── orders/             # Order management
+│   │   │   ├── page.tsx        # Orders list
+│   │   │   └── [id]/           # Order details
+│   │   │       └── page.tsx    # Order detail view
 │   │   ├── products/           # Product management
-│   │   └── subcategories/      # Subcategory management
+│   │   ├── subcategories/      # Subcategory management
+│   │   └── users/              # User management
+│   │       ├── page.tsx        # Users list
+│   │       └── [id]/           # User details
+│   │           └── page.tsx    # User detail view
 │   ├── layout.tsx              # Root layout
 │   └── page.tsx                # Landing page
 ├── components/                  # Reusable components
@@ -95,13 +103,16 @@ dashboard/
 │   ├── chart-area-interactive.tsx # Interactive charts
 │   ├── ProductTable.tsx        # Products table
 │   ├── CategoryTable.tsx       # Categories table
-│   └── OrderTable.tsx          # Orders table
+│   ├── OrderTable.tsx          # Orders table
+│   └── UserTable.tsx           # Users table
 ├── Hooks/                      # Custom React hooks
 │   ├── useProducts.js          # Products data management
 │   ├── useCategories.js        # Categories data management
 │   ├── useSubcategories.js     # Subcategories data management
 │   ├── useBrands.js            # Brands data management
 │   ├── useOrders.js            # Orders data management
+│   ├── useUsers.js             # Users data management
+│   ├── useUser.js              # Single user data management
 │   ├── useChartData.js         # Chart data management
 │   └── use-mobile.ts           # Mobile detection
 ├── lib/                        # Utility functions
@@ -117,20 +128,25 @@ dashboard/
 
 ## 🔧 API Integration
 
-The application integrates with [RouteMisr E-commerce API](https://ecommerce.routemisr.com/api/v1/) for real e-commerce data:
+The application integrates with multiple APIs for comprehensive data management:
 
+### DummyJSON API (https://dummyjson.com/)
+- **Users API**: `/users` - Complete user profiles with personal information
+- **Carts API**: `/carts` - Shopping cart data and order management
+
+### RouteMisr E-commerce API (https://ecommerce.routemisr.com/api/v1/)
 - **Products API**: `/products` - Complete product catalog with ratings and images
 - **Categories API**: `/categories` - Product categories management
 - **Subcategories API**: `/subcategories` - Detailed product classification
 - **Brands API**: `/brands` - Brand portfolio management
-- **Orders API**: `/orders` - Order tracking and transaction data
 
 ### API Features Used:
-- Server-side pagination with `page` and `limit` parameters
+- Server-side pagination with `page`, `limit`, `skip` parameters
 - Real-time data fetching with caching
 - Error handling and retry logic
 - Automatic data refresh
-- Detailed product information with images and specifications
+- Detailed user profiles with images and specifications
+- Comprehensive cart/order information
 
 ## 🎨 UI/UX Features
 
@@ -211,6 +227,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 - [TanStack Query](https://tanstack.com/query/) - Data fetching library
 - [Recharts](https://recharts.org/) - Composable charting library
+- [DummyJSON](https://dummyjson.com/) - Mock API for users and carts
 - [RouteMisr](https://ecommerce.routemisr.com/) - E-commerce API
 - [Tabler Icons](https://tabler.io/icons) - Icon library
 
