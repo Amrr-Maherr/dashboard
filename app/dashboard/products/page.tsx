@@ -28,14 +28,7 @@ export default function ProductsPage() {
   if (isLoading) {
     return (
       <ProtectedRoute>
-        <SidebarProvider
-          style={
-            {
-              "--sidebar-width": "calc(var(--spacing) * 72)",
-              "--header-height": "calc(var(--spacing) * 12)",
-            } as React.CSSProperties
-          }
-        >
+      <SidebarProvider>
           <AppSidebar variant="floating" />
           <SidebarInset>
             <SiteHeader />
@@ -51,14 +44,7 @@ export default function ProductsPage() {
   if (error) {
     return (
       <ProtectedRoute>
-        <SidebarProvider
-          style={
-            {
-              "--sidebar-width": "calc(var(--spacing) * 72)",
-              "--header-height": "calc(var(--spacing) * 12)",
-            } as React.CSSProperties
-          }
-        >
+        <SidebarProvider>
           <AppSidebar variant="floating" />
           <SidebarInset>
             <SiteHeader />
@@ -78,14 +64,7 @@ export default function ProductsPage() {
 
   return (
     <ProtectedRoute>
-      <SidebarProvider
-        style={
-          {
-            "--sidebar-width": "calc(var(--spacing) * 72)",
-            "--header-height": "calc(var(--spacing) * 12)",
-          } as React.CSSProperties
-        }
-      >
+      <SidebarProvider>
         <AppSidebar variant="floating" />
         <SidebarInset>
           <SiteHeader />

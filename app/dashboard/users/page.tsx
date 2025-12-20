@@ -20,14 +20,7 @@ export default function UsersPage() {
   if (isLoading) {
     return (
       <ProtectedRoute>
-        <SidebarProvider
-          style={
-            {
-              "--sidebar-width": "calc(var(--spacing) * 72)",
-              "--header-height": "calc(var(--spacing) * 12)",
-            } as React.CSSProperties
-          }
-        >
+        <SidebarProvider>
           <AppSidebar variant="floating" />
           <SidebarInset>
             <SiteHeader />
@@ -43,14 +36,7 @@ export default function UsersPage() {
   if (error) {
     return (
       <ProtectedRoute>
-        <SidebarProvider
-          style={
-            {
-              "--sidebar-width": "calc(var(--spacing) * 72)",
-              "--header-height": "calc(var(--spacing) * 12)",
-            } as React.CSSProperties
-          }
-        >
+        <SidebarProvider>
           <AppSidebar variant="floating" />
           <SidebarInset>
             <SiteHeader />
@@ -68,14 +54,7 @@ export default function UsersPage() {
 
   return (
     <ProtectedRoute>
-      <SidebarProvider
-        style={
-          {
-            "--sidebar-width": "calc(var(--spacing) * 72)",
-            "--header-height": "calc(var(--spacing) * 12)",
-          } as React.CSSProperties
-        }
-      >
+      <SidebarProvider>
         <AppSidebar variant="floating" />
         <SidebarInset>
           <SiteHeader />

@@ -54,6 +54,21 @@ const data = {
       icon: IconListDetails,
     },
     {
+      title: "Categories",
+      url: "/dashboard/categories",
+      icon: IconFolder,
+    },
+    {
+      title: "Subcategories",
+      url: "/dashboard/subcategories",
+      icon: IconListDetails,
+    },
+    {
+      title: "Brands",
+      url: "/dashboard/brands",
+      icon: IconReport,
+    },
+    {
       title: "Users",
       url: "/dashboard/users",
       icon: IconUsers,

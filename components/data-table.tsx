@@ -370,6 +370,7 @@ export function DataTable({
   pageSize: externalPageSize,
   onPageChange,
   onPageSizeChange,
+  getRowId,
 }: {
   data: z.infer<typeof schema>[];
   customColumns?: ColumnDef<z.infer<typeof schema>>[];
@@ -378,6 +379,7 @@ export function DataTable({
   pageSize?: number;
   onPageChange?: (pageIndex: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
+  getRowId?: (row: any) => string;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -482,7 +484,7 @@ export function DataTable({
     },
     pageCount,
     manualPagination: true,
-    getRowId: (row) => row.id.toString(),
+    getRowId: getRowId || ((row) => row.id.toString()),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
