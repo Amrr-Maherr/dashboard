@@ -1,8 +1,7 @@
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
-import { useQuery } from "@tanstack/react-query"
-import api from "@/lib/api"
+import { useProduct } from "@/Hooks/useProduct"
 import { ProtectedRoute } from "@/Providers/ProtectedRoute"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
@@ -16,17 +15,18 @@ import {
 } from "@/components/ui/sidebar"
 
 interface Product {
-  id: number
+  id: string
   title: string
   description: string
   price: number
-  discountPercentage: number
-  rating: number
-  stock: number
-  brand: string
-  category: string
-  thumbnail: string
+  quantity: number
+  imageCover: string
   images: string[]
+  category: any
+  brand: any
+  ratingsAverage: number
+  ratingsQuantity: number
+  sold: number
 }
 
 export default function ProductDetailPage() {
@@ -34,14 +34,7 @@ export default function ProductDetailPage() {
   const router = useRouter()
   const productId = params.id as string
 
-  const { data: product, isLoading, error } = useQuery({
-    queryKey: ['product', productId],
-    queryFn: async () => {
-      const response = await api.get(`/products/${productId}`)
-      return response.data as Product
-    },
-    enabled: !!productId,
-  })
+  const { data: product, isLoading, error } = useProduct(productId)
 
   if (isLoading) {
     return (
@@ -138,12 +131,12 @@ export default function ProductDetailPage() {
                     <CardContent>
                       <div className="space-y-4">
                         <img
-                          src={product.thumbnail}
+                          src={product.imageCover}
                           alt={product.title}
                           className="w-full h-64 object-cover rounded-lg"
                         />
                         <div className="grid grid-cols-3 gap-2">
-                          {product.images.slice(1, 4).map((image, index) => (
+                          {product.images.slice(0, 3).map((image, index) => (
                             <img
                               key={index}
                               src={image}
@@ -162,8 +155,8 @@ export default function ProductDetailPage() {
                       <CardHeader>
                         <CardTitle className="flex items-center justify-between">
                           {product.title}
-                          <Badge variant={product.stock > 0 ? "default" : "destructive"}>
-                            {product.stock > 0 ? "In Stock" : "Out of Stock"}
+                          <Badge variant={product.quantity > 0 ? "default" : "destructive"}>
+                            {product.quantity > 0 ? "In Stock" : "Out of Stock"}
                           </Badge>
                         </CardTitle>
                       </CardHeader>
@@ -176,16 +169,16 @@ export default function ProductDetailPage() {
                             <p className="text-2xl font-bold text-green-600">${product.price}</p>
                           </div>
                           <div>
-                            <span className="font-semibold">Discount:</span>
-                            <p>{product.discountPercentage}%</p>
-                          </div>
-                          <div>
                             <span className="font-semibold">Rating:</span>
-                            <p>⭐ {product.rating}/5</p>
+                            <p>⭐ {product.ratingsAverage}/5 ({product.ratingsQuantity} reviews)</p>
                           </div>
                           <div>
-                            <span className="font-semibold">Stock:</span>
-                            <p>{product.stock} units</p>
+                            <span className="font-semibold">Quantity:</span>
+                            <p>{product.quantity} units</p>
+                          </div>
+                          <div>
+                            <span className="font-semibold">Sold:</span>
+                            <p>{product.sold} units</p>
                           </div>
                         </div>
                       </CardContent>
@@ -199,11 +192,11 @@ export default function ProductDetailPage() {
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <span className="font-semibold">Brand:</span>
-                            <p>{product.brand}</p>
+                            <p>{product.brand.name}</p>
                           </div>
                           <div>
                             <span className="font-semibold">Category:</span>
-                            <Badge variant="outline">{product.category}</Badge>
+                            <Badge variant="outline">{product.category.name}</Badge>
                           </div>
                         </div>
                       </CardContent>
