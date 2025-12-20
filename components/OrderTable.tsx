@@ -3,6 +3,24 @@
 import { DataTable } from "@/components/data-table"
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
+
+function TableCellViewer({ item }: { item: { id: string; header: string } }) {
+  const router = useRouter();
+
+  return (
+    <span className="text-foreground">
+      <Button
+        variant="link"
+        className="text-foreground w-fit px-0 text-left h-auto p-0"
+        onClick={() => router.push(`/dashboard/orders/${item.id}`)}
+      >
+        {item.header}
+      </Button>
+    </span>
+  );
+}
 
 interface OrderTableProps {
   data: any[]
@@ -23,56 +41,47 @@ export function OrderTable({
 }: OrderTableProps) {
   const customColumns: ColumnDef<any>[] = [
     {
-      accessorKey: "id",
-      header: "Order ID",
-      cell: ({ row }: { row: any }) => (
-        <span>#{row.original.id}</span>
-      ),
+      accessorKey: "header",
+      header: "Cart ID",
+      cell: ({ row }: { row: any }) => {
+        return <TableCellViewer item={{ id: row.original.id, header: row.original.header }} />
+      },
     },
     {
-      accessorKey: "user",
+      accessorKey: "type",
       header: "Customer",
       cell: ({ row }: { row: any }) => (
-        <span>{row.original.user?.name || row.original.user?.email || 'Unknown'}</span>
+        <span>{row.original.type}</span>
       ),
     },
     {
-      accessorKey: "totalOrderPrice",
+      accessorKey: "target",
       header: "Total Price",
       cell: ({ row }: { row: any }) => (
-        <span>${row.original.totalOrderPrice?.toFixed(2)}</span>
+        <span>${row.original.target}</span>
       ),
     },
     {
-      accessorKey: "cartItems",
-      header: "Items",
+      accessorKey: "limit",
+      header: "Items Count",
       cell: ({ row }: { row: any }) => (
-        <span>{row.original.cartItems?.length || 0}</span>
+        <span>{row.original.limit} items</span>
       ),
     },
     {
-      accessorKey: "isPaid",
-      header: "Payment",
+      accessorKey: "reviewer",
+      header: "Total Quantity",
       cell: ({ row }: { row: any }) => (
-        <Badge variant={row.original.isPaid ? "default" : "destructive"}>
-          {row.original.isPaid ? "Paid" : "Pending"}
+        <span>{row.original.reviewer} pcs</span>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }: { row: any }) => (
+        <Badge variant="default">
+          {row.original.status}
         </Badge>
-      ),
-    },
-    {
-      accessorKey: "isDelivered",
-      header: "Delivery",
-      cell: ({ row }: { row: any }) => (
-        <Badge variant={row.original.isDelivered ? "default" : "secondary"}>
-          {row.original.isDelivered ? "Delivered" : "Processing"}
-        </Badge>
-      ),
-    },
-    {
-      accessorKey: "createdAt",
-      header: "Date",
-      cell: ({ row }: { row: any }) => (
-        <span>{new Date(row.original.createdAt).toLocaleDateString()}</span>
       ),
     },
   ]

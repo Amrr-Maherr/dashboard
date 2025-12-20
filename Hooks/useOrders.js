@@ -57,24 +57,24 @@ import api from '@/lib/api'
  * @returns {Promise<PaginatedOrdersResponse>}
  */
 const fetchOrders = async ({ pageParam = 1, limit = 10 }) => {
-  const page = pageParam + 1 // API uses 1-based indexing
-  const response = await api.get(`/orders?page=${page}&limit=${limit}`)
+  const skip = pageParam * limit
+  const response = await fetch(`https://dummyjson.com/carts?limit=${limit}&skip=${skip}`)
   /** @type {CartsResponse} */
-  const data = response.data
+  const data = await response.json()
 
   return {
-    data: data.data.map(order => ({
-      id: order.id,
-      header: `Order #${order.id}`,
-      type: order.user?.name || order.user?.email || 'Unknown',
-      status: order.isDelivered ? 'Delivered' : order.isPaid ? 'Paid' : 'Pending',
-      target: (order.totalOrderPrice || 0).toString(),
-      limit: order.cartItems?.length?.toString() || '0',
-      reviewer: 'Admin',
+    data: data.carts.map(cart => ({
+      id: cart.id,
+      header: `Cart #${cart.id}`,
+      type: `User ${cart.userId}`,
+      status: 'Active',
+      target: cart.discountedTotal.toString(),
+      limit: cart.totalProducts.toString(),
+      reviewer: cart.totalQuantity.toString(),
     })),
-    total: data.results,
+    total: data.total,
     limit,
-    skip: (page - 1) * limit
+    skip
   }
 }
 

@@ -44,8 +44,8 @@ export default function OrderDetailPage() {
   const { data: order, isLoading, error } = useQuery({
     queryKey: ['order', orderId],
     queryFn: async () => {
-      const response = await api.get(`/carts/${orderId}`)
-      return response.data as Order
+      const response = await fetch(`https://dummyjson.com/carts/${orderId}`)
+      return await response.json() as Order
     },
     enabled: !!orderId,
   })
