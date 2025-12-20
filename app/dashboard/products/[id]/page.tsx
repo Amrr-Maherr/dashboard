@@ -206,11 +206,13 @@ export default function ProductDetailPage() {
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <span className="font-semibold">Brand:</span>
-                            <p>{product.brand?.name || 'Unknown'}</p>
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                            <p>{(product.brand as any)?.name || 'Unknown'}</p>
                           </div>
                           <div>
                             <span className="font-semibold">Category:</span>
-                            <Badge variant="outline">{product.category?.name || 'Unknown'}</Badge>
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                            <Badge variant="outline">{(product.category as any)?.name || 'Unknown'}</Badge>
                           </div>
                         </div>
                       </CardContent>
