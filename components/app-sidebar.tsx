@@ -69,29 +69,9 @@ const data = {
       icon: IconReport,
     },
     {
-      title: "Users",
-      url: "/dashboard/users",
-      icon: IconUsers,
-    },
-    {
       title: "Orders",
       url: "/dashboard/orders",
       icon: IconReport,
-    },
-    {
-      title: "Posts",
-      url: "/dashboard/posts",
-      icon: IconNotes,
-    },
-    {
-      title: "Todos",
-      url: "/dashboard/todos",
-      icon: IconCheck,
-    },
-    {
-      title: "Comments",
-      url: "/dashboard/comments",
-      icon: IconMessage,
     },
     {
       title: "Analytics",
