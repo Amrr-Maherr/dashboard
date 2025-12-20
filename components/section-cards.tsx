@@ -1,8 +1,7 @@
 "use client"
 
-import { useQuery } from '@tanstack/react-query'
-import { IconShoppingCart, IconUsers, IconPackage, IconTrendingUp } from "@tabler/icons-react"
-import api from '@/lib/api'
+import { IconShoppingCart, IconFolder, IconListDetails, IconReport, IconPackage, IconTrendingUp } from "@tabler/icons-react"
+import { useStats } from "@/Hooks/useStats"
 
 import { Badge } from "@/components/ui/badge"
 import {
@@ -14,48 +13,20 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-/**
- * @typedef {Object} Cart
- * @property {number} id
- * @property {Array} products
- * @property {number} total
- * @property {number} discountedTotal
- * @property {number} userId
- * @property {number} totalProducts
- * @property {number} totalQuantity
- */
-
 export function SectionCards() {
-  // Fetch statistics from APIs
-  const { data: productsStats } = useQuery({
-    queryKey: ['products-stats'],
-    queryFn: async () => {
-      const response = await api.get('/products')
-      return { total: response.data.total, products: response.data.products }
-    },
-    staleTime: 5 * 60 * 1000,
-  })
+  const { products, categories, subcategories, brands, orders, isLoading } = useStats()
 
-  const { data: usersStats } = useQuery({
-    queryKey: ['users-stats'],
-    queryFn: async () => {
-      const response = await api.get('/users')
-      return { total: response.data.total, users: response.data.users }
-    },
-    staleTime: 5 * 60 * 1000,
-  })
-
-  const { data: ordersStats } = useQuery({
-    queryKey: ['orders-stats'],
-    queryFn: async () => {
-      const response = await api.get('/carts')
-      return { total: response.data.total, carts: response.data.carts }
-    },
-    staleTime: 5 * 60 * 1000,
-  })
-
-  // Calculate total revenue from orders
-  const totalRevenue = ordersStats?.carts?.reduce((sum: number, cart: any) => sum + (cart.total || 0), 0) || 0 // eslint-disable-line @typescript-eslint/no-explicit-any
+  if (isLoading) {
+    return (
+      <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+        <Card className="@container/card">
+          <CardHeader>
+            <CardTitle>Loading...</CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
@@ -63,7 +34,7 @@ export function SectionCards() {
         <CardHeader>
           <CardDescription>Total Products</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {productsStats?.total || 0}
+            {products}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
@@ -84,23 +55,69 @@ export function SectionCards() {
 
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Total Users</CardDescription>
+          <CardDescription>Total Categories</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {usersStats?.total || 0}
+            {categories}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <IconUsers className="size-4" />
-              Users
+              <IconFolder className="size-4" />
+              Categories
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Registered accounts <IconUsers className="size-4" />
+            Product categories <IconFolder className="size-4" />
           </div>
           <div className="text-muted-foreground">
-            Active user base
+            Category management
+          </div>
+        </CardFooter>
+      </Card>
+
+      <Card className="@container/card">
+        <CardHeader>
+          <CardDescription>Total Subcategories</CardDescription>
+          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+            {subcategories}
+          </CardTitle>
+          <CardAction>
+            <Badge variant="outline">
+              <IconListDetails className="size-4" />
+              Subcategories
+            </Badge>
+          </CardAction>
+        </CardHeader>
+        <CardFooter className="flex-col items-start gap-1.5 text-sm">
+          <div className="line-clamp-1 flex gap-2 font-medium">
+            Sub categories <IconListDetails className="size-4" />
+          </div>
+          <div className="text-muted-foreground">
+            Detailed classification
+          </div>
+        </CardFooter>
+      </Card>
+
+      <Card className="@container/card">
+        <CardHeader>
+          <CardDescription>Total Brands</CardDescription>
+          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+            {brands}
+          </CardTitle>
+          <CardAction>
+            <Badge variant="outline">
+              <IconReport className="size-4" />
+              Brands
+            </Badge>
+          </CardAction>
+        </CardHeader>
+        <CardFooter className="flex-col items-start gap-1.5 text-sm">
+          <div className="line-clamp-1 flex gap-2 font-medium">
+            Brand partners <IconReport className="size-4" />
+          </div>
+          <div className="text-muted-foreground">
+            Brand management system
           </div>
         </CardFooter>
       </Card>
@@ -109,7 +126,7 @@ export function SectionCards() {
         <CardHeader>
           <CardDescription>Total Orders</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {ordersStats?.total || 0}
+            {orders}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
@@ -124,29 +141,6 @@ export function SectionCards() {
           </div>
           <div className="text-muted-foreground">
             Order management system
-          </div>
-        </CardFooter>
-      </Card>
-
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Total Revenue</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            ${totalRevenue.toFixed(2)}
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <IconTrendingUp className="size-4" />
-              Revenue
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Total sales value <IconTrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            From all completed orders
           </div>
         </CardFooter>
       </Card>

@@ -10,14 +10,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { useProducts } from "@/Hooks/useProducts"
-
-/**
- * @typedef {Object} PaginatedProductsResponse
- * @property {Array} data
- * @property {number} total
- * @property {number} limit
- * @property {number} skip
- */
+import { ProductTable } from "@/components/ProductTable"
 
 export default function ProductsPage() {
   const [pageIndex, setPageIndex] = useState(0)
@@ -75,7 +68,7 @@ export default function ProductsPage() {
                   <h1 className="text-2xl font-bold">Products Management</h1>
                   <p className="text-muted-foreground">Manage your product inventory ({totalCount} total products)</p>
                 </div>
-                <DataTable
+                <ProductTable
                   data={productsData}
                   totalCount={totalCount}
                   pageIndex={pageIndex}

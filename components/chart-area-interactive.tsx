@@ -150,8 +150,8 @@ export function ChartAreaInteractive() {
   const { data: ordersData } = useQuery({
     queryKey: ['orders-chart'],
     queryFn: async () => {
-      const response = await api.get('/carts?limit=20')
-      return response.data.carts
+      const response = await api.get('/orders?limit=50')
+      return response.data.data
     },
     staleTime: 5 * 60 * 1000,
   })
@@ -164,9 +164,17 @@ export function ChartAreaInteractive() {
 
   // Generate chart data from orders
   const dynamicChartData = React.useMemo(() => {
-    if (!ordersData) return chartData // fallback to static data
+    if (!ordersData || ordersData.length === 0) return []
 
-    // Create last 30 days data based on orders
+    // Group orders by date
+    const salesByDate = ordersData.reduce((acc: any, order: any) => {
+      const date = new Date(order.createdAt).toISOString().split('T')[0]
+      if (!acc[date]) acc[date] = 0
+      acc[date] += order.totalOrderPrice || 0
+      return acc
+    }, {})
+
+    // Create last 30 days data
     const data = []
     const today = new Date()
 
@@ -174,15 +182,12 @@ export function ChartAreaInteractive() {
       const date = new Date(today)
       date.setDate(date.getDate() - i)
       const dateStr = date.toISOString().split('T')[0]
-
-      // Simulate daily sales based on order totals
-      const dayOrders = ordersData.filter((order: any, index: number) => index % (30 - i) === 0)
-      const totalSales = dayOrders.reduce((sum: number, order: any) => sum + (order.total || 0), 0)
+      const totalSales = salesByDate[dateStr] || 0
 
       data.push({
         date: dateStr,
-        desktop: Math.max(50, Math.floor(totalSales * 0.7)), // Desktop sales
-        mobile: Math.max(30, Math.floor(totalSales * 0.3)), // Mobile sales
+        desktop: Math.max(0, Math.floor(totalSales * 0.7)), // Desktop sales
+        mobile: Math.max(0, Math.floor(totalSales * 0.3)), // Mobile sales
       })
     }
 

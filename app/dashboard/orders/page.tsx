@@ -10,6 +10,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { useOrders } from "@/Hooks/useOrders"
+import { OrderTable } from "@/components/OrderTable"
 
 export default function OrdersPage() {
   const [pageIndex, setPageIndex] = useState(0)
@@ -65,7 +66,7 @@ export default function OrdersPage() {
                   <h1 className="text-2xl font-bold">Orders Management</h1>
                   <p className="text-muted-foreground">Manage customer orders and transactions ({totalCount} total orders)</p>
                 </div>
-                <DataTable
+                <OrderTable
                   data={ordersData}
                   totalCount={totalCount}
                   pageIndex={pageIndex}
