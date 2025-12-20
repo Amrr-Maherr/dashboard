@@ -49,6 +49,16 @@ const data = {
       icon: IconDashboard,
     },
     {
+      title: "Analytics",
+      url: "/dashboard/analytics",
+      icon: IconChartBar,
+    },
+    {
+      title: "Users",
+      url: "/dashboard/users",
+      icon: IconUsers,
+    },
+    {
       title: "Products",
       url: "/dashboard/products",
       icon: IconListDetails,
@@ -72,16 +82,6 @@ const data = {
       title: "Orders",
       url: "/dashboard/orders",
       icon: IconReport,
-    },
-    {
-      title: "Analytics",
-      url: "/dashboard/analytics",
-      icon: IconChartBar,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
     },
   ],
   navClouds: [

@@ -51,24 +51,24 @@ import api from '@/lib/api'
  * @returns {Promise<PaginatedUsersResponse>}
  */
 const fetchUsers = async ({ pageParam = 1, limit = 10 }) => {
-  const page = pageParam + 1 // API uses 1-based indexing
-  const response = await api.get(`/users?page=${page}&limit=${limit}`)
+  const skip = pageParam * limit
+  const response = await fetch(`https://dummyjson.com/users?limit=${limit}&skip=${skip}`)
   /** @type {UsersResponse} */
-  const data = response.data
+  const data = await response.json()
 
   return {
-    data: data.data.map(user => ({
+    data: data.users.map(user => ({
       id: user.id,
-      header: `${user.name || 'Unknown User'}`,
-      type: user.role || 'User',
+      header: `${user.firstName} ${user.lastName}`,
+      type: 'User',
       status: 'Active',
       target: user.age?.toString() || 'N/A',
       limit: user.email || 'N/A',
       reviewer: user.phone || 'No phone',
     })),
-    total: data.results,
+    total: data.total,
     limit,
-    skip: (page - 1) * limit
+    skip
   }
 }
 
