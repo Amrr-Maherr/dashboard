@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useRouter, usePathname } from "next/navigation"
+import * as React from "react";
+import { useRouter, usePathname } from "next/navigation";
 import {
   closestCenter,
   DndContext,
@@ -12,15 +12,15 @@ import {
   useSensors,
   type DragEndEvent,
   type UniqueIdentifier,
-} from "@dnd-kit/core"
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
+} from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   arrayMove,
   SortableContext,
   useSortable,
   verticalListSortingStrategy,
-} from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   IconChevronDown,
   IconChevronLeft,
@@ -34,7 +34,7 @@ import {
   IconLoader,
   IconPlus,
   IconTrendingUp,
-} from "@tabler/icons-react"
+} from "@tabler/icons-react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -49,21 +49,29 @@ import {
   SortingState,
   useReactTable,
   VisibilityState,
-} from "@tanstack/react-table"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-import { toast } from "sonner"
-import { z } from "zod"
+} from "@tanstack/react-table";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { toast } from "sonner";
+import { z } from "zod";
 
-
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-import { Checkbox } from "@/components/ui/checkbox"
+} from "@/components/ui/chart";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerClose,
@@ -73,7 +81,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
+} from "@/components/ui/drawer";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -81,17 +89,17 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -99,14 +107,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
-import { useIsMobile } from "@/Hooks/use-mobile"
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useIsMobile } from "@/Hooks/use-mobile";
 
 export const schema = z.object({
   id: z.number(),
@@ -116,13 +119,13 @@ export const schema = z.object({
   target: z.string(),
   limit: z.string(),
   reviewer: z.string(),
-})
+});
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
   const { attributes, listeners } = useSortable({
     id,
-  })
+  });
 
   return (
     <Button
@@ -135,11 +138,14 @@ function DragHandle({ id }: { id: number }) {
       <IconGripVertical className="text-muted-foreground size-3" />
       <span className="sr-only">Drag to reorder</span>
     </Button>
-  )
+  );
 }
 
 // Helper function to create columns with dynamic detail URL generation
-const createColumns = (getDetailUrl: (item: z.infer<typeof schema>) => string | null, router: any) => [
+const createColumns = (
+  getDetailUrl: (item: z.infer<typeof schema>) => string | null,
+  router: any
+) => [
   {
     id: "drag",
     header: () => null,
@@ -175,7 +181,7 @@ const createColumns = (getDetailUrl: (item: z.infer<typeof schema>) => string | 
     accessorKey: "header",
     header: "Header",
     cell: ({ row }: { row: any }) => {
-      return <TableCellViewer item={row.original} />
+      return <TableCellViewer item={row.original} />;
     },
     enableHiding: false,
   },
@@ -210,12 +216,12 @@ const createColumns = (getDetailUrl: (item: z.infer<typeof schema>) => string | 
     cell: ({ row }: { row: any }) => (
       <form
         onSubmit={(e) => {
-          e.preventDefault()
+          e.preventDefault();
           toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
             loading: `Saving ${row.original.header}`,
             success: "Done",
             error: "Error",
-          })
+          });
         }}
       >
         <Label htmlFor={`${row.original.id}-target`} className="sr-only">
@@ -235,12 +241,12 @@ const createColumns = (getDetailUrl: (item: z.infer<typeof schema>) => string | 
     cell: ({ row }: { row: any }) => (
       <form
         onSubmit={(e) => {
-          e.preventDefault()
+          e.preventDefault();
           toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
             loading: `Saving ${row.original.header}`,
             success: "Done",
             error: "Error",
-          })
+          });
         }}
       >
         <Label htmlFor={`${row.original.id}-limit`} className="sr-only">
@@ -258,10 +264,10 @@ const createColumns = (getDetailUrl: (item: z.infer<typeof schema>) => string | 
     accessorKey: "reviewer",
     header: "Reviewer",
     cell: ({ row }: { row: any }) => {
-      const isAssigned = row.original.reviewer !== "Assign reviewer"
+      const isAssigned = row.original.reviewer !== "Assign reviewer";
 
       if (isAssigned) {
-        return row.original.reviewer
+        return row.original.reviewer;
       }
 
       return (
@@ -285,14 +291,14 @@ const createColumns = (getDetailUrl: (item: z.infer<typeof schema>) => string | 
             </SelectContent>
           </Select>
         </>
-      )
+      );
     },
   },
   {
     id: "details",
     header: () => <div className="text-center">Details</div>,
     cell: ({ row }: { row: any }) => {
-      const detailUrl = getDetailUrl(row.original)
+      const detailUrl = getDetailUrl(row.original);
       return detailUrl ? (
         <Button
           variant="ghost"
@@ -303,7 +309,7 @@ const createColumns = (getDetailUrl: (item: z.infer<typeof schema>) => string | 
           <IconChevronRight className="size-4" />
           <span className="sr-only">View details</span>
         </Button>
-      ) : null
+      ) : null;
     },
   },
   {
@@ -330,12 +336,12 @@ const createColumns = (getDetailUrl: (item: z.infer<typeof schema>) => string | 
       </DropdownMenu>
     ),
   },
-]
+];
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
-  })
+  });
 
   return (
     <TableRow
@@ -354,7 +360,7 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
         </TableCell>
       ))}
     </TableRow>
-  )
+  );
 }
 
 export function DataTable({
@@ -366,29 +372,54 @@ export function DataTable({
   onPageChange,
   onPageSizeChange,
 }: {
-  data: z.infer<typeof schema>[]
-  customColumns?: ColumnDef<z.infer<typeof schema>>[]
-  totalCount?: number
-  pageIndex?: number
-  pageSize?: number
-  onPageChange?: (pageIndex: number) => void
-  onPageSizeChange?: (pageSize: number) => void
+  data: z.infer<typeof schema>[];
+  customColumns?: ColumnDef<z.infer<typeof schema>>[];
+  totalCount?: number;
+  pageIndex?: number;
+  pageSize?: number;
+  onPageChange?: (pageIndex: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
 }) {
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const [data, setData] = React.useState(() => initialData)
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [data, setData] = React.useState(() => initialData);
+  const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  )
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  );
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: externalPageIndex ?? 0,
     pageSize: externalPageSize ?? 10,
-  })
+  });
+
+  const [open, setOpen] = React.useState(false);
+  const [formData, setFormData] = React.useState({
+    header: "",
+    type: "",
+    status: "",
+    target: "",
+    limit: "",
+    reviewer: "",
+  });
+
+  const handleSubmit = () => {
+    const newId = Math.max(...data.map((d) => d.id), 0) + 1;
+    const newSection = { id: newId, ...formData };
+    setData((prev) => [...prev, newSection]);
+    setOpen(false);
+    setFormData({
+      header: "",
+      type: "",
+      status: "",
+      target: "",
+      limit: "",
+      reviewer: "",
+    });
+  };
 
   // Sync with external pagination
   React.useEffect(() => {
@@ -396,35 +427,36 @@ export function DataTable({
       setPagination({
         pageIndex: externalPageIndex,
         pageSize: externalPageSize,
-      })
+      });
     }
-  }, [externalPageIndex, externalPageSize])
+  }, [externalPageIndex, externalPageSize]);
 
   // Handle pagination changes
   const handlePaginationChange = (updater: any) => {
-    const newPagination = typeof updater === 'function' ? updater(pagination) : updater
-    setPagination(newPagination)
+    const newPagination =
+      typeof updater === "function" ? updater(pagination) : updater;
+    setPagination(newPagination);
     if (onPageChange) {
-      onPageChange(newPagination.pageIndex)
+      onPageChange(newPagination.pageIndex);
     }
     if (onPageSizeChange) {
-      onPageSizeChange(newPagination.pageSize)
+      onPageSizeChange(newPagination.pageSize);
     }
-  }
-  const sortableId = React.useId()
+  };
+  const sortableId = React.useId();
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
-  )
+  );
 
   // Always show details in drawer
-  const getDetailUrl = (item: z.infer<typeof schema>) => null
+  const getDetailUrl = (item: z.infer<typeof schema>) => null;
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
     [data]
-  )
+  );
 
   const table = useReactTable({
     data,
@@ -449,16 +481,16 @@ export function DataTable({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  })
+  });
 
   function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event
+    const { active, over } = event;
     if (active && over && active.id !== over.id) {
       setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id)
-        const newIndex = dataIds.indexOf(over.id)
-        return arrayMove(data, oldIndex, newIndex)
-      })
+        const oldIndex = dataIds.indexOf(active.id);
+        const newIndex = dataIds.indexOf(over.id);
+        return arrayMove(data, oldIndex, newIndex);
+      });
     }
   }
 
@@ -483,19 +515,9 @@ export function DataTable({
             <SelectItem value="outline">Outline</SelectItem>
             <SelectItem value="past-performance">Past Performance</SelectItem>
             <SelectItem value="key-personnel">Key Personnel</SelectItem>
-            <SelectItem value="focus-documents">Focus Documents</SelectItem>
+            <SelectItem value="focus-documents"></SelectItem>
           </SelectContent>
         </Select>
-        <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
-          <TabsTrigger value="outline">Outline</TabsTrigger>
-          <TabsTrigger value="past-performance">
-            Past Performance <Badge variant="secondary">3</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="key-personnel">
-            Key Personnel <Badge variant="secondary">2</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
-        </TabsList>
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -526,14 +548,85 @@ export function DataTable({
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
-                  )
+                  );
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm">
-            <IconPlus />
-            <span className="hidden lg:inline">Add Section</span>
-          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <IconPlus />
+                <span className="hidden lg:inline">Add Section</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Section</DialogTitle>
+                <DialogDescription>
+                  Fill in the details for the new section.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="header" className="text-right">
+                    Header
+                  </Label>
+                  <Input
+                    id="header"
+                    value={formData.header}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        header: e.target.value,
+                      }))
+                    }
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="type" className="text-right">
+                    Type
+                  </Label>
+                  <Select
+                    value={formData.type}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, type: value }))
+                    }
+                  >
+                    <SelectTrigger className="col-span-3">
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Section">Section</SelectItem>
+                      <SelectItem value="Subsection">Subsection</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="status" className="text-right">
+                    Status
+                  </Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, status: value }))
+                    }
+                  >
+                    <SelectTrigger className="col-span-3">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="In Progress">In Progress</SelectItem>
+                      <SelectItem value="Done">Done</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={handleSubmit}>Add Section</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       <TabsContent
@@ -562,7 +655,7 @@ export function DataTable({
                                 header.getContext()
                               )}
                         </TableHead>
-                      )
+                      );
                     })}
                   </TableRow>
                 ))}
@@ -579,10 +672,7 @@ export function DataTable({
                   </SortableContext>
                 ) : (
                   <TableRow>
-                    <TableCell
-                      colSpan={9}
-                      className="h-24 text-center"
-                    >
+                    <TableCell colSpan={9} className="h-24 text-center">
                       No results.
                     </TableCell>
                   </TableRow>
@@ -604,7 +694,7 @@ export function DataTable({
               <Select
                 value={`${table.getState().pagination.pageSize}`}
                 onValueChange={(value) => {
-                  table.setPageSize(Number(value))
+                  table.setPageSize(Number(value));
                 }}
               >
                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
@@ -685,7 +775,7 @@ export function DataTable({
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
     </Tabs>
-  )
+  );
 }
 
 const chartData = [
@@ -695,7 +785,7 @@ const chartData = [
   { month: "April", desktop: 73, mobile: 190 },
   { month: "May", desktop: 209, mobile: 130 },
   { month: "June", desktop: 214, mobile: 140 },
-]
+];
 
 const chartConfig = {
   desktop: {
@@ -706,25 +796,25 @@ const chartConfig = {
     label: "Mobile",
     color: "var(--primary)",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
 
   // Determine the detail page URL based on current route
   const getDetailUrl = () => {
-    if (pathname.includes('/products')) {
-      return `/dashboard/products/${item.id}`
-    } else if (pathname.includes('/users')) {
-      return `/dashboard/users/${item.id}`
-    } else if (pathname.includes('/orders')) {
-      return `/dashboard/orders/${item.id}`
+    if (pathname.includes("/products")) {
+      return `/dashboard/products/${item.id}`;
+    } else if (pathname.includes("/users")) {
+      return `/dashboard/users/${item.id}`;
+    } else if (pathname.includes("/orders")) {
+      return `/dashboard/orders/${item.id}`;
     }
-    return null
-  }
+    return null;
+  };
 
-  const detailUrl = getDetailUrl()
+  const detailUrl = getDetailUrl();
 
   return (
     <span className="text-foreground">
@@ -740,5 +830,5 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
         <span>{item.header}</span>
       )}
     </span>
-  )
+  );
 }
