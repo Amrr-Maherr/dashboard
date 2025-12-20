@@ -89,12 +89,6 @@ export function LoginForm({
             <p><strong>Password:</strong> emilyspass</p>
             <p className="text-xs">These are demo credentials from dummyjson.com</p>
           </div>
-          <FieldDescription className="text-center">
-            Don't have an account?{" "}
-            <Link href="/Signup" className="underline underline-offset-4">
-              Sign up
-            </Link>
-          </FieldDescription>
         </Field>
       </FieldGroup>
     </form>
