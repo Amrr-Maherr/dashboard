@@ -45,25 +45,25 @@ import api from '@/lib/api'
  * @param {number} params.limit
  * @returns {Promise<PaginatedProductsResponse>}
  */
-const fetchProducts = async ({ pageParam = 0, limit = 10 }) => {
-  const skip = pageParam * limit
-  const response = await api.get(`/products?limit=${limit}&skip=${skip}`)
+const fetchProducts = async ({ pageParam = 1, limit = 10 }) => {
+  const page = pageParam + 1 // API uses 1-based indexing
+  const response = await api.get(`/products?page=${page}&limit=${limit}`)
   /** @type {ProductsResponse} */
   const data = response.data
 
   return {
-    data: data.products.map(product => ({
+    data: data.data.map(product => ({
       id: product.id,
       header: product.title,
-      type: product.category,
-      status: product.stock > 0 ? "In Stock" : "Out of Stock",
+      type: product.category?.name || 'Unknown',
+      status: product.quantity > 0 ? "In Stock" : "Out of Stock",
       target: (product.price || 0).toString(),
-      limit: (product.discountPercentage || 0).toString(),
-      reviewer: product.brand || 'Unknown',
+      limit: product.ratingsAverage?.toString() || '0',
+      reviewer: product.brand?.name || 'Unknown',
     })),
-    total: data.total,
+    total: data.results,
     limit,
-    skip
+    skip: (page - 1) * limit
   }
 }
 

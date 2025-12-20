@@ -56,25 +56,25 @@ import api from '@/lib/api'
  * @param {number} params.limit
  * @returns {Promise<PaginatedOrdersResponse>}
  */
-const fetchOrders = async ({ pageParam = 0, limit = 10 }) => {
-  const skip = pageParam * limit
-  const response = await api.get(`/carts?limit=${limit}&skip=${skip}`)
+const fetchOrders = async ({ pageParam = 1, limit = 10 }) => {
+  const page = pageParam + 1 // API uses 1-based indexing
+  const response = await api.get(`/orders?page=${page}&limit=${limit}`)
   /** @type {CartsResponse} */
   const data = response.data
 
   return {
-    data: data.carts.map(cart => ({
-      id: cart.id,
-      header: `Order #${cart.id}`,
-      type: cart.userId?.toString() || '0',
-      status: cart.total > 500 ? 'Completed' : 'Pending',
-      target: (cart.total || 0).toString(),
-      limit: cart.products?.length?.toString() || '0',
+    data: data.data.map(order => ({
+      id: order.id,
+      header: `Order #${order.id}`,
+      type: order.user?.name || order.user?.email || 'Unknown',
+      status: order.isDelivered ? 'Delivered' : order.isPaid ? 'Paid' : 'Pending',
+      target: (order.totalOrderPrice || 0).toString(),
+      limit: order.cartItems?.length?.toString() || '0',
       reviewer: 'Admin',
     })),
-    total: data.total,
+    total: data.results,
     limit,
-    skip
+    skip: (page - 1) * limit
   }
 }
 
