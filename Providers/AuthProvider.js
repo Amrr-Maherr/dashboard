@@ -1,38 +1,20 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { authService } from '@/lib/auth'
 
 const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const initAuth = async () => {
-      const token = authService.getToken()
-      if (token) {
-        try {
-          const userData = await authService.getCurrentUser()
-          setUser(userData)
-        } catch (error) {
-          // For dummyjson.com which doesn't support auth endpoints,
-          // just continue without logging out
-          console.warn('Auth endpoint not available, continuing without authentication')
-        }
-      }
-      setIsLoading(false)
-    }
-
-    initAuth()
-  }, [])
 
   const login = async (credentials) => {
     try {
       const response = await authService.login(credentials)
-      authService.setToken(response.token)
-      setUser(response.user || response)
+      // For dummyjson.com, create a fake token since they don't provide real auth
+      const fakeToken = `dummy-token-logged-in`
+      authService.setToken(fakeToken)
+      setUser(response)
       return response
     } catch (error) {
       throw error
@@ -48,8 +30,7 @@ export function AuthProvider({ children }) {
     user,
     login,
     logout,
-    isAuthenticated: authService.isAuthenticated(),
-    isLoading
+    isAuthenticated: !!authService.getToken()
   }
 
   return (
