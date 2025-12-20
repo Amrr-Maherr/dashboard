@@ -53,7 +53,7 @@ export function ProductTable({
       header: "Category",
       cell: ({ row }: { row: any }) => (
         <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {row.original.category?.name || row.original.category}
+          {row.original.category?.name || 'Unknown'}
         </Badge>
       ),
     },
@@ -61,7 +61,7 @@ export function ProductTable({
       accessorKey: "brand",
       header: "Brand",
       cell: ({ row }: { row: any }) => (
-        <span>{row.original.brand?.name || row.original.brand}</span>
+        <span>{row.original.brand?.name || 'Unknown'}</span>
       ),
     },
     {

@@ -51,17 +51,31 @@ const fetchProducts = async ({ pageParam = 1, limit = 10 }) => {
   /** @type {ProductsResponse} */
   const data = response.data
 
+  // If data is array directly (RouteMisr returns array)
+  let products = []
+  let total = 0
+
+  if (Array.isArray(data)) {
+    products = data
+    total = data.length // For demo, use array length
+  } else {
+    products = data.data || data.products || []
+    total = data.results || data.total || 0
+  }
+
   return {
-    data: data.data.map(product => ({
-      id: product.id,
-      header: product.title,
-      type: product.category?.name || 'Unknown',
-      status: product.quantity > 0 ? "In Stock" : "Out of Stock",
-      target: (product.price || 0).toString(),
-      limit: product.ratingsAverage?.toString() || '0',
-      reviewer: product.brand?.name || 'Unknown',
+    data: products.map(product => ({
+      id: product.id || product._id,
+      title: product.title,
+      category: product.category,
+      brand: product.brand,
+      price: product.price,
+      quantity: product.quantity,
+      ratingsAverage: product.ratingsAverage,
+      images: product.images,
+      imageCover: product.imageCover,
     })),
-    total: data.results,
+    total,
     limit,
     skip: (page - 1) * limit
   }

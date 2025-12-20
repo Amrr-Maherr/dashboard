@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
-import { DataTable } from "@/components/data-table"
 import { SiteHeader } from "@/components/site-header"
 import { ProtectedRoute } from "@/Providers/ProtectedRoute"
 import {
@@ -17,6 +16,8 @@ export default function ProductsPage() {
   const [pageSize, setPageSize] = useState(10)
 
   const { data: productsResponse, isLoading, error } = useProducts(pageIndex, pageSize)
+
+  console.log('Products response:', productsResponse) // Debug
 
   if (isLoading) {
     return (
