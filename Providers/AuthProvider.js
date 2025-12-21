@@ -9,16 +9,10 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
 
   const login = async (credentials) => {
-    try {
-      const response = await authService.login(credentials)
-      // For dummyjson.com, create a fake token since they don't provide real auth
-      const fakeToken = `dummy-token-logged-in`
-      authService.setToken(fakeToken)
-      setUser(response)
-      return response
-    } catch (error) {
-      throw error
-    }
+    const response = await authService.login(credentials)
+    authService.setToken(response.token)
+    setUser(response)
+    return response
   }
 
   const logout = () => {
