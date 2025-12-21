@@ -1,12 +1,12 @@
 "use client"
 
-import { DataTable } from "@/components/data-table"
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { exportToExcelAdvanced } from "@/lib/utils"
 import { IconDownload } from "@tabler/icons-react"
+import { SimpleDataTable } from "@/components/simple-data-table"
 
 function TableCellViewer({ item }: { item: { id: string; header: string } }) {
   const router = useRouter();
@@ -88,40 +88,7 @@ export function OrderTable({
     },
   ]
 
-  const handleExport = () => {
-    const exportData = data.map(item => ({
-      'Order ID': item.id,
-      'Cart ID': item.header,
-      'Customer': item.type,
-      'Total Price': item.target,
-      'Items Count': item.limit,
-      'Total Quantity': item.reviewer,
-      'Status': item.status
-    }));
 
-    exportToExcelAdvanced(exportData, 'orders.xlsx', {
-      sheetName: 'Orders'
-    });
-  };
 
-  return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
-        <Button onClick={handleExport} variant="outline">
-          <IconDownload className="mr-2 h-4 w-4" />
-          Export to Excel
-        </Button>
-      </div>
-      <DataTable
-        data={data as any}
-        customColumns={customColumns as any}
-        totalCount={totalCount}
-        pageIndex={pageIndex}
-        pageSize={pageSize}
-        onPageChange={onPageChange}
-        onPageSizeChange={onPageSizeChange}
-        getRowId={(row) => row.id}
-      />
-    </div>
-  )
+  return <SimpleDataTable data={data} columns={customColumns} />
 }

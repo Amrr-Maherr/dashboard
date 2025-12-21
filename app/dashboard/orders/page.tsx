@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/sidebar"
 import { useOrders } from "@/Hooks/useOrders"
 import { OrderTable } from "@/components/OrderTable"
+import { exportToExcelAdvanced } from "@/lib/utils"
+import { IconDownload } from "@tabler/icons-react"
+import { Button } from "@/components/ui/button"
 
 export default function OrdersPage() {
   const [pageIndex, setPageIndex] = useState(0)
@@ -62,9 +65,29 @@ export default function OrdersPage() {
           <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                <div className="px-4 lg:px-6">
-                  <h1 className="text-2xl font-bold">Orders Management</h1>
-                  <p className="text-muted-foreground">Manage customer orders and transactions ({totalCount} total orders)</p>
+                <div className="px-4 lg:px-6 flex items-center justify-between">
+                  <div>
+                    <h1 className="text-2xl font-bold">Orders Management</h1>
+                    <p className="text-muted-foreground">Manage customer orders and transactions ({totalCount} total orders)</p>
+                  </div>
+                  <Button onClick={() => {
+                    const exportData = ordersData.map((item: any) => ({
+                      'Order ID': item.id,
+                      'Cart ID': item.header,
+                      'Customer': item.type,
+                      'Total Price': item.target,
+                      'Items Count': item.limit,
+                      'Total Quantity': item.reviewer,
+                      'Status': item.status
+                    }));
+
+                    exportToExcelAdvanced(exportData, 'orders.xlsx', {
+                      sheetName: 'Orders'
+                    });
+                  }} variant="outline">
+                    <IconDownload className="mr-2 h-4 w-4" />
+                    Export Excel
+                  </Button>
                 </div>
                 <OrderTable
                   data={ordersData}

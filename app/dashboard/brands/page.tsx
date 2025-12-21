@@ -10,6 +10,9 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { useBrands } from "@/Hooks/useBrands"
+import { exportToExcelAdvanced } from "@/lib/utils"
+import { IconDownload } from "@tabler/icons-react"
+import { Button } from "@/components/ui/button"
 
 export default function BrandsPage() {
   const [pageIndex, setPageIndex] = useState(0)
@@ -61,9 +64,26 @@ export default function BrandsPage() {
           <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                <div className="px-4 lg:px-6">
-                  <h1 className="text-2xl font-bold">Brands Management</h1>
-                  <p className="text-muted-foreground">Manage product brands ({totalCount} total brands)</p>
+                <div className="px-4 lg:px-6 flex items-center justify-between">
+                  <div>
+                    <h1 className="text-2xl font-bold">Brands Management</h1>
+                    <p className="text-muted-foreground">Manage product brands ({totalCount} total brands)</p>
+                  </div>
+                  <Button onClick={() => {
+                    const exportData = brandsData.map((item: any) => ({
+                      'Brand ID': item._id,
+                      'Brand Name': item.name,
+                      'Slug': item.slug,
+                      'Logo URL': item.image
+                    }));
+
+                    exportToExcelAdvanced(exportData, 'brands.xlsx', {
+                      sheetName: 'Brands'
+                    });
+                  }} variant="outline">
+                    <IconDownload className="mr-2 h-4 w-4" />
+                    Export Excel
+                  </Button>
                 </div>
                 <BrandTable
                   data={brandsData}

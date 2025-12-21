@@ -10,6 +10,9 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { useSubcategories } from "@/Hooks/useSubcategories"
+import { exportToExcelAdvanced } from "@/lib/utils"
+import { IconDownload } from "@tabler/icons-react"
+import { Button } from "@/components/ui/button"
 
 export default function SubcategoriesPage() {
   const [pageIndex, setPageIndex] = useState(0)
@@ -61,9 +64,26 @@ export default function SubcategoriesPage() {
           <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                <div className="px-4 lg:px-6">
-                  <h1 className="text-2xl font-bold">Subcategories Management</h1>
-                  <p className="text-muted-foreground">Manage product subcategories ({totalCount} total subcategories)</p>
+                <div className="px-4 lg:px-6 flex items-center justify-between">
+                  <div>
+                    <h1 className="text-2xl font-bold">Subcategories Management</h1>
+                    <p className="text-muted-foreground">Manage product subcategories ({totalCount} total subcategories)</p>
+                  </div>
+                  <Button onClick={() => {
+                    const exportData = subcategoriesData.map((item: any) => ({
+                      'Subcategory ID': item._id,
+                      'Subcategory Name': item.name,
+                      'Slug': item.slug,
+                      'Category': item.category
+                    }));
+
+                    exportToExcelAdvanced(exportData, 'subcategories.xlsx', {
+                      sheetName: 'Subcategories'
+                    });
+                  }} variant="outline">
+                    <IconDownload className="mr-2 h-4 w-4" />
+                    Export Excel
+                  </Button>
                 </div>
                 <SubcategoryTable
                   data={subcategoriesData}

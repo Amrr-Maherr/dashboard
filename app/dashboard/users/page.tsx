@@ -10,6 +10,9 @@ import {
 } from "@/components/ui/sidebar"
 import { useUsers } from "@/Hooks/useUsers"
 import { UserTable } from "@/components/UserTable"
+import { exportToExcelAdvanced } from "@/lib/utils"
+import { IconDownload } from "@tabler/icons-react"
+import { Button } from "@/components/ui/button"
 
 export default function UsersPage() {
   const [pageIndex, setPageIndex] = useState(0)
@@ -65,9 +68,29 @@ export default function UsersPage() {
           <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                <div className="px-4 lg:px-6">
-                  <h1 className="text-2xl font-bold">Users Management</h1>
-                  <p className="text-muted-foreground">Manage your users ({totalCount} total users)</p>
+                <div className="px-4 lg:px-6 flex items-center justify-between">
+                  <div>
+                    <h1 className="text-2xl font-bold">Users Management</h1>
+                    <p className="text-muted-foreground">Manage your users ({totalCount} total users)</p>
+                  </div>
+                  <Button onClick={() => {
+                    const exportData = usersData.map((item: any) => ({
+                      'User ID': item.id,
+                      'Name': item.header,
+                      'Role': item.type,
+                      'Status': item.status,
+                      'Age': item.target,
+                      'Email': item.limit,
+                      'Phone': item.reviewer
+                    }));
+
+                    exportToExcelAdvanced(exportData, 'users.xlsx', {
+                      sheetName: 'Users'
+                    });
+                  }} variant="outline">
+                    <IconDownload className="mr-2 h-4 w-4" />
+                    Export Excel
+                  </Button>
                 </div>
                 <UserTable
                   data={usersData}

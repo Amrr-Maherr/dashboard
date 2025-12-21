@@ -10,6 +10,9 @@ import {
 } from "@/components/ui/sidebar"
 import { useProducts } from "@/Hooks/useProducts"
 import { ProductTable } from "@/components/ProductTable"
+import { exportToExcelAdvanced } from "@/lib/utils"
+import { IconDownload } from "@tabler/icons-react"
+import { Button } from "@/components/ui/button"
 
 export default function ProductsPage() {
   const [pageIndex, setPageIndex] = useState(0)
@@ -65,9 +68,30 @@ export default function ProductsPage() {
           <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                <div className="px-4 lg:px-6">
-                  <h1 className="text-2xl font-bold">Products Management</h1>
-                  <p className="text-muted-foreground">Manage your product inventory ({totalCount} total products)</p>
+                <div className="px-4 lg:px-6 flex items-center justify-between">
+                  <div>
+                    <h1 className="text-2xl font-bold">Products Management</h1>
+                    <p className="text-muted-foreground">Manage your product inventory ({totalCount} total products)</p>
+                  </div>
+                  <Button onClick={() => {
+                    const exportData = productsData.map((item: any) => ({
+                      'Product ID': item.id,
+                      'Product Name': item.title,
+                      'Category': item.category?.name || 'N/A',
+                      'Brand': item.brand?.name || 'N/A',
+                      'Price': item.price,
+                      'Stock Quantity': item.quantity,
+                      'Rating': item.ratingsAverage || 'N/A',
+                      'Images': item.images?.join(', ') || 'N/A'
+                    }));
+
+                    exportToExcelAdvanced(exportData, 'products.xlsx', {
+                      sheetName: 'Products'
+                    });
+                  }} variant="outline">
+                    <IconDownload className="mr-2 h-4 w-4" />
+                    Export Excel
+                  </Button>
                 </div>
                 <ProductTable
                   data={productsData}
