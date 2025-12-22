@@ -2,23 +2,23 @@
 
 import * as React from "react"
 import {
-  LayoutDashboard,
-  BarChart3,
-  Users,
-  Package,
-  FolderTree,
-  Building2,
-  ShoppingCart,
-  Camera,
-  FileText,
-  Bot,
-  Database,
-  Settings,
-  HelpCircle,
-  Search,
-  FileCode,
-  CheckCircle,
-} from "lucide-react"
+  IconLayoutDashboard,
+  IconChartBar,
+  IconUsers,
+  IconPackage,
+  IconFolderTree,
+  IconBuilding,
+  IconShoppingCart,
+  IconCamera,
+  IconFileText,
+  IconRobot,
+  IconDatabase,
+  IconSettings,
+  IconHelpCircle,
+  IconSearch,
+  IconFileCode,
+  IconCircleCheck,
+} from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
@@ -44,48 +44,48 @@ const data = {
     {
       title: "Dashboard",
       url: "/dashboard",
-      icon: LayoutDashboard,
+      icon: IconLayoutDashboard,
     },
     {
       title: "Analytics",
       url: "/dashboard/analytics",
-      icon: BarChart3,
+      icon: IconChartBar,
     },
     {
       title: "Users",
       url: "/dashboard/users",
-      icon: Users,
+      icon: IconUsers,
     },
     {
       title: "Products",
       url: "/dashboard/products",
-      icon: Package,
+      icon: IconPackage,
     },
     {
       title: "Categories",
       url: "/dashboard/categories",
-      icon: FolderTree,
+      icon: IconFolderTree,
     },
     {
       title: "Subcategories",
       url: "/dashboard/subcategories",
-      icon: FolderTree,
+      icon: IconFolderTree,
     },
     {
       title: "Brands",
       url: "/dashboard/brands",
-      icon: Building2,
+      icon: IconBuilding,
     },
     {
       title: "Orders",
       url: "/dashboard/orders",
-      icon: ShoppingCart,
+      icon: IconShoppingCart,
     },
   ],
   navClouds: [
     {
       title: "Capture",
-      icon: Camera,
+      icon: IconCamera,
       isActive: true,
       url: "#",
       items: [
@@ -101,7 +101,7 @@ const data = {
     },
     {
       title: "Proposal",
-      icon: FileText,
+      icon: IconFileText,
       url: "#",
       items: [
         {
@@ -116,7 +116,7 @@ const data = {
     },
     {
       title: "Prompts",
-      icon: Bot,
+      icon: IconRobot,
       url: "#",
       items: [
         {
@@ -134,34 +134,34 @@ const data = {
     {
       title: "Settings",
       url: "#",
-      icon: Settings,
+      icon: IconSettings,
     },
     {
       title: "Get Help",
       url: "#",
-      icon: HelpCircle,
+      icon: IconHelpCircle,
     },
     {
       title: "Search",
       url: "#",
-      icon: Search,
+      icon: IconSearch,
     },
   ],
   documents: [
     {
       name: "Data Library",
       url: "#",
-      icon: Database,
+      icon: IconDatabase,
     },
     {
       name: "Reports",
       url: "#",
-      icon: BarChart3,
+      icon: IconChartBar,
     },
     {
       name: "Word Assistant",
       url: "#",
-      icon: FileCode,
+      icon: IconFileCode,
     },
   ],
 }
