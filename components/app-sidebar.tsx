@@ -6,7 +6,7 @@ import {
   IconChartBar,
   IconUsers,
   IconPackage,
-  IconFolderTree,
+  IconFolder,
   IconBuilding,
   IconShoppingCart,
   IconCamera,
@@ -64,12 +64,12 @@ const data = {
     {
       title: "Categories",
       url: "/dashboard/categories",
-      icon: IconFolderTree,
+      icon: IconFolder,
     },
     {
       title: "Subcategories",
       url: "/dashboard/subcategories",
-      icon: IconFolderTree,
+      icon: IconFolder,
     },
     {
       title: "Brands",
