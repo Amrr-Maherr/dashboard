@@ -17,32 +17,61 @@ interface SimpleDataTableProps {
   data: any[]
   columns: ColumnDef<any>[]
   pageSize?: number
+  // Server-side pagination props
+  totalCount?: number
+  pageIndex?: number
+  onPageChange?: (pageIndex: number) => void
+  onPageSizeChange?: (pageSize: number) => void
 }
 
-export function SimpleDataTable({ data, columns, pageSize = 10 }: SimpleDataTableProps) {
-  const [pageIndex, setPageIndex] = useState(0)
+export function SimpleDataTable({
+  data,
+  columns,
+  pageSize = 10,
+  totalCount,
+  pageIndex: externalPageIndex,
+  onPageChange,
+  onPageSizeChange
+}: SimpleDataTableProps) {
+  // Use server-side pagination if props provided, otherwise client-side
+  const isServerSide = totalCount !== undefined && externalPageIndex !== undefined && onPageChange !== undefined
+
+  const [clientPageIndex, setClientPageIndex] = useState(0)
+  const [clientPageSize, setClientPageSize] = useState(pageSize)
+
+  const currentPageIndex = isServerSide ? externalPageIndex : clientPageIndex
+  const currentPageSize = isServerSide ? pageSize : clientPageSize
+  const totalPages = isServerSide ? Math.ceil(totalCount / pageSize) : Math.ceil(data.length / pageSize)
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    pageCount: Math.ceil(data.length / pageSize),
+    pageCount: totalPages,
     state: {
       pagination: {
-        pageIndex,
-        pageSize,
+        pageIndex: currentPageIndex,
+        pageSize: currentPageSize,
       },
     },
     onPaginationChange: (updater) => {
-      const newState = typeof updater === "function" ? updater({ pageIndex, pageSize }) : updater
-      setPageIndex(newState.pageIndex)
+      if (isServerSide) {
+        const newState = typeof updater === "function" ? updater({ pageIndex: currentPageIndex, pageSize: currentPageSize }) : updater
+        onPageChange(newState.pageIndex)
+        if (onPageSizeChange && newState.pageSize !== currentPageSize) {
+          onPageSizeChange(newState.pageSize)
+        }
+      } else {
+        const newState = typeof updater === "function" ? updater({ pageIndex: clientPageIndex, pageSize: clientPageSize }) : updater
+        setClientPageIndex(newState.pageIndex)
+        setClientPageSize(newState.pageSize)
+      }
     },
-    manualPagination: false,
+    manualPagination: isServerSide,
   });
 
-  const totalPages = table.getPageCount()
-  const canPreviousPage = pageIndex > 0
-  const canNextPage = pageIndex < totalPages - 1
+  const canPreviousPage = currentPageIndex > 0
+  const canNextPage = currentPageIndex < totalPages - 1
 
   return (
     <div className="space-y-4">
@@ -95,7 +124,13 @@ export function SimpleDataTable({ data, columns, pageSize = 10 }: SimpleDataTabl
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPageIndex(0)}
+            onClick={() => {
+              if (isServerSide) {
+                onPageChange(0)
+              } else {
+                setClientPageIndex(0)
+              }
+            }}
             disabled={!canPreviousPage}
           >
             <IconChevronsLeft className="h-4 w-4" />
@@ -103,18 +138,30 @@ export function SimpleDataTable({ data, columns, pageSize = 10 }: SimpleDataTabl
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPageIndex(pageIndex - 1)}
+            onClick={() => {
+              if (isServerSide) {
+                onPageChange(currentPageIndex - 1)
+              } else {
+                setClientPageIndex(clientPageIndex - 1)
+              }
+            }}
             disabled={!canPreviousPage}
           >
             <IconChevronLeft className="h-4 w-4" />
           </Button>
           <span className="text-sm">
-            Page {pageIndex + 1} of {totalPages}
+            Page {currentPageIndex + 1} of {totalPages}
           </span>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPageIndex(pageIndex + 1)}
+            onClick={() => {
+              if (isServerSide) {
+                onPageChange(currentPageIndex + 1)
+              } else {
+                setClientPageIndex(clientPageIndex + 1)
+              }
+            }}
             disabled={!canNextPage}
           >
             <IconChevronRight className="h-4 w-4" />
@@ -122,7 +169,13 @@ export function SimpleDataTable({ data, columns, pageSize = 10 }: SimpleDataTabl
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPageIndex(totalPages - 1)}
+            onClick={() => {
+              if (isServerSide) {
+                onPageChange(totalPages - 1)
+              } else {
+                setClientPageIndex(totalPages - 1)
+              }
+            }}
             disabled={!canNextPage}
           >
             <IconChevronsRight className="h-4 w-4" />

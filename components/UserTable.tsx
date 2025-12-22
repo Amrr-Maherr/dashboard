@@ -93,5 +93,15 @@ export function UserTable({
 
 
 
-  return <SimpleDataTable data={data} columns={customColumns} />
+  return (
+    <SimpleDataTable
+      data={data}
+      columns={customColumns}
+      totalCount={totalCount}
+      pageIndex={pageIndex}
+      pageSize={pageSize}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+    />
+  )
 }
