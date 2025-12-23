@@ -7,10 +7,9 @@ import { SiteHeader } from "@/components/site-header";
 import { ProtectedRoute } from "@/Providers/ProtectedRoute";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ShimmerLoader } from "@/components/ui/shimmer-loader";
+import { TableHeaderSection } from "@/components/ui/table-header-section";
 import { useCategories } from "@/Hooks/useCategories";
 import { exportToExcelAdvanced } from "@/lib/utils";
-import { IconDownload } from "@tabler/icons-react";
-import { Button } from "@/components/ui/button";
 
 export default function CategoriesPage() {
   const [pageIndex, setPageIndex] = useState(0);
@@ -21,6 +20,22 @@ export default function CategoriesPage() {
     isLoading,
     error,
   } = useCategories(pageIndex, pageSize);
+
+  const categoriesData = categoriesResponse?.data || [];
+  const totalCount = categoriesResponse?.total || 0;
+
+  const handleExport = () => {
+    const exportData = categoriesData.map((item: any) => ({
+      "Category ID": item._id,
+      "Category Name": item.name,
+      Slug: item.slug,
+      "Image URL": item.image,
+    }));
+
+    exportToExcelAdvanced(exportData, "categories.xlsx", {
+      sheetName: "Categories",
+    });
+  };
 
   if (isLoading) {
     return (
@@ -39,16 +54,10 @@ export default function CategoriesPage() {
             <div className="flex flex-1 flex-col">
               <div className="@container/main flex flex-1 flex-col gap-2">
                 <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                  <div className="px-4 lg:px-6 flex flex-wrap gap-[15px] items-center justify-between">
-                    <div>
-                      <h1 className="text-2xl font-bold">
-                        Categories Management
-                      </h1>
-                      <p className="text-muted-foreground">
-                        Manage product categories
-                      </p>
-                    </div>
-                  </div>
+                  <TableHeaderSection
+                    title="Categories Management"
+                    description="Manage product categories"
+                  />
                   <ShimmerLoader columns={3} />
                 </div>
               </div>
@@ -84,9 +93,6 @@ export default function CategoriesPage() {
     );
   }
 
-  const categoriesData = categoriesResponse?.data || [];
-  const totalCount = categoriesResponse?.total || 0;
-
   return (
     <ProtectedRoute>
       <SidebarProvider
@@ -103,34 +109,12 @@ export default function CategoriesPage() {
           <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                <div className="px-4 lg:px-6 flex flex-wrap gap-[15px] items-center justify-between">
-                  <div>
-                    <h1 className="text-2xl font-bold">
-                      Categories Management
-                    </h1>
-                    <p className="text-muted-foreground">
-                      Manage product categories ({totalCount} total categories)
-                    </p>
-                  </div>
-                  <Button
-                    onClick={() => {
-                      const exportData = categoriesData.map((item: any) => ({
-                        "Category ID": item._id,
-                        "Category Name": item.name,
-                        Slug: item.slug,
-                        "Image URL": item.image,
-                      }));
-
-                      exportToExcelAdvanced(exportData, "categories.xlsx", {
-                        sheetName: "Categories",
-                      });
-                    }}
-                    variant="outline"
-                  >
-                    <IconDownload className="mr-2 h-4 w-4" />
-                    Export Excel
-                  </Button>
-                </div>
+                <TableHeaderSection
+                  title="Categories Management"
+                  description="Manage product categories ({totalCount} total categories)"
+                  totalCount={totalCount}
+                  onExport={handleExport}
+                />
                 <CategoryTable
                   data={categoriesData}
                   totalCount={totalCount}

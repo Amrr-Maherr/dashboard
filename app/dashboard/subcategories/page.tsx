@@ -7,10 +7,9 @@ import { SiteHeader } from "@/components/site-header";
 import { ProtectedRoute } from "@/Providers/ProtectedRoute";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ShimmerLoader } from "@/components/ui/shimmer-loader";
+import { TableHeaderSection } from "@/components/ui/table-header-section";
 import { useSubcategories } from "@/Hooks/useSubcategories";
 import { exportToExcelAdvanced } from "@/lib/utils";
-import { IconDownload } from "@tabler/icons-react";
-import { Button } from "@/components/ui/button";
 
 export default function SubcategoriesPage() {
   const [pageIndex, setPageIndex] = useState(0);
@@ -22,6 +21,22 @@ export default function SubcategoriesPage() {
     error,
   } = useSubcategories(pageIndex, pageSize);
 
+  const subcategoriesData = subcategoriesResponse?.data || [];
+  const totalCount = subcategoriesResponse?.total || 0;
+
+  const handleExport = () => {
+    const exportData = subcategoriesData.map((item: any) => ({
+      "Subcategory ID": item._id,
+      "Subcategory Name": item.name,
+      Slug: item.slug,
+      Category: item.category,
+    }));
+
+    exportToExcelAdvanced(exportData, "subcategories.xlsx", {
+      sheetName: "Subcategories",
+    });
+  };
+
   if (isLoading) {
     return (
       <ProtectedRoute>
@@ -32,16 +47,10 @@ export default function SubcategoriesPage() {
             <div className="flex flex-1 flex-col">
               <div className="@container/main flex flex-1 flex-col gap-2">
                 <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                  <div className="px-4 lg:px-6 flex flex-wrap gap-[15px] items-center justify-between">
-                    <div>
-                      <h1 className="text-2xl font-bold">
-                        Subcategories Management
-                      </h1>
-                      <p className="text-muted-foreground">
-                        Manage product subcategories
-                      </p>
-                    </div>
-                  </div>
+                  <TableHeaderSection
+                    title="Subcategories Management"
+                    description="Manage product subcategories"
+                  />
                   <ShimmerLoader columns={3} />
                 </div>
               </div>
@@ -70,9 +79,6 @@ export default function SubcategoriesPage() {
     );
   }
 
-  const subcategoriesData = subcategoriesResponse?.data || [];
-  const totalCount = subcategoriesResponse?.total || 0;
-
   return (
     <ProtectedRoute>
       <SidebarProvider>
@@ -82,35 +88,12 @@ export default function SubcategoriesPage() {
           <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                <div className="px-4 lg:px-6 flex flex-wrap gap-[15px] items-center justify-between">
-                  <div>
-                    <h1 className="text-2xl font-bold">
-                      Subcategories Management
-                    </h1>
-                    <p className="text-muted-foreground">
-                      Manage product subcategories ({totalCount} total
-                      subcategories)
-                    </p>
-                  </div>
-                  <Button
-                    onClick={() => {
-                      const exportData = subcategoriesData.map((item: any) => ({
-                        "Subcategory ID": item._id,
-                        "Subcategory Name": item.name,
-                        Slug: item.slug,
-                        Category: item.category,
-                      }));
-
-                      exportToExcelAdvanced(exportData, "subcategories.xlsx", {
-                        sheetName: "Subcategories",
-                      });
-                    }}
-                    variant="outline"
-                  >
-                    <IconDownload className="mr-2 h-4 w-4" />
-                    Export Excel
-                  </Button>
-                </div>
+                <TableHeaderSection
+                  title="Subcategories Management"
+                  description="Manage product subcategories ({totalCount} total subcategories)"
+                  totalCount={totalCount}
+                  onExport={handleExport}
+                />
                 <SubcategoryTable
                   data={subcategoriesData}
                   totalCount={totalCount}
